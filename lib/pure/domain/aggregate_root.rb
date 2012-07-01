@@ -1,3 +1,4 @@
+require 'pure'
 require 'pure/domain/aggregate_root_created_event'
 
 module Pure
@@ -10,7 +11,9 @@ module Pure
 				aggregate_root = new(attributes)
 
 				# TODO: Generate id
-				id = 1
+				generator = Pure.config.id_generator
+				id = generator.id_for_entity(aggregate_root.class)
+
 				aggregate_root.instance_variable_set(:@id, id)
 
 				event_list = []
