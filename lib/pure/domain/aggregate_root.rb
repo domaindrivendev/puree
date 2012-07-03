@@ -12,7 +12,7 @@ module Pure
 
 				# TODO: Generate id
 				generator = Pure.config.id_generator
-				id = generator.id_for_entity(aggregate_root.class)
+				id = generator.next_id(aggregate_root.class.name)
 
 				aggregate_root.instance_variable_set(:@id, id)
 

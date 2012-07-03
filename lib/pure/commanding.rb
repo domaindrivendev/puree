@@ -6,9 +6,9 @@ module Pure
 
 			attr_reader :aggregate_root_classes
 
-			def for_aggregate_root(aggregate_root_class)
+			def for_aggregate_root(klass)
 				@aggregate_root_classes ||= []
-				@aggregate_root_classes << aggregate_root_class
+				@aggregate_root_classes << klass
 			end
 		end
 
