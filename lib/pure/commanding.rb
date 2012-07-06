@@ -1,4 +1,4 @@
-require 'pure/eventing/event_store_repository'
+require 'pure/repositories/event_store_repository'
 
 module Pure
 	module Commanding
@@ -24,7 +24,7 @@ module Pure
 				if method.to_s == "create_#{underscored_name}"
 					return klass.create(args[0])
 				elsif method.to_s == "#{underscored_name}_repository"
-					return Eventing::EventStoreRepository.for_aggregate_root(klass)
+					return Repositories::EventStoreRepository.for_aggregate_root(klass)
 				end
 			end
 

@@ -1,5 +1,5 @@
 module Pure
-	module Eventing
+	module Repositories
 		class EventStoreRepository
 
 			def self.for_aggregate_root(aggregate_root_class)
