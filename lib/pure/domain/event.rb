@@ -2,11 +2,11 @@ module Pure
   module Domain
     class Event
 
-      attr_reader :aggregate_id, :event_type, :attributes
+      attr_reader :aggregate_root_id, :name, :attributes
 
-      def initialize(aggregate_id, event_type, attributes={})
-        @aggregate_id = aggregate_id
-        @event_type = event_type
+      def initialize(aggregate_root_id, name, attributes={})
+        @aggregate_root_id = aggregate_root_id
+        @name = name
         @attributes = attributes
       end
 
