@@ -4,11 +4,11 @@ module Pure
 	module Commanding
 		module ClassMethods
 
-			attr_reader :aggregate_root_classes
+	  	attr_reader :aggregate_root_klasses
 
 			def for_aggregate_root(klass)
-				@aggregate_root_classes ||= []
-				@aggregate_root_classes << klass
+        @aggregate_root_klasses ||= []
+        @aggregate_root_klasses << klass
 			end
 		end
 
@@ -17,12 +17,13 @@ module Pure
 		end
 
 		def method_missing(method, *args, &block)
-			self.class.aggregate_root_classes.each do |klass|
+			self.class.aggregate_root_klasses.each do |klass|
 				name = klass.name.split('::').last
 				underscored_name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
 
 				if method.to_s == "create_#{underscored_name}"
-					return klass.create(args[0])
+          id = Pure.config.id_generator.next_id(klass.name)
+					return klass.create(id, args[0])
 				elsif method.to_s == "#{underscored_name}_repository"
 					return Repositories::EventStoreRepository.for_aggregate_root(klass)
 				end
