@@ -1,5 +1,6 @@
 require 'singleton'
-require "pure/version"
+require 'pure/version'
+require 'pure/event_bus/blocking_event_bus'
 
 module Pure
 
@@ -24,6 +25,10 @@ module Pure
         raise 'Pure.config.event_store has not been configured'
       end
       @event_store
+    end
+
+    def event_bus
+      @event_bus ||= Pure::EventBus::BlockingEventBus.new
     end
 
   end

@@ -13,13 +13,14 @@ module Pure
 			def save(aggregate_root)
 				event_list = aggregate_root.instance_variable_get(:@event_list)
 
-				event_store = Pure.config.event_store
 				event_list.each do |event|
 					# TODO: Support for concurrency
-					event_store.save(event)
+          Pure.config.event_store.save(event)
 				end
 
-				# TODO: Dispatch events on event bus
+        event_list.each do |event|
+          Pure.config.event_bus.publish(event)
+        end
 			end
 		end
 	end
