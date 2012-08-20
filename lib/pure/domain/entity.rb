@@ -39,7 +39,7 @@ module Pure
       def exec_apply_event_block(event_name, attributes)
         apply_event_blocks = self.class.apply_event_blocks
         if apply_event_blocks[event_name].nil?
-          raise "Failed to apply event - no apply_event block registered for #{name}"
+          raise "Failed to apply event - no apply_event block registered for #{event_name}"
         end
         instance_exec(attributes, &apply_event_blocks[event_name])
       end

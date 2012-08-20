@@ -15,18 +15,18 @@ module Pure
         instance
       end
 
-      def self.recreate(past_events)
-        if past_events.nil? or past_events.length == 0
-          raise "Can't' recreate without any past events"
+      def self.recreate(previous_events)
+        if previous_events.nil? or previous_events.length == 0
+          raise "Can't recreate without any previous events"
         end
 
-        created_event = past_events.first
+        created_event = previous_events.first
         if created_event.name != created_event_name
           raise "Can't recreate when initial event is not #{created_event_name}"
         end
 
         instance = create(created_event.aggregate_root_id, created_event.attributes)
-        instance.replay_events(past_events.drop(1))
+        instance.replay_events(previous_events.drop(1))
         instance.instance_variable_set(:@event_list, [])
 
         instance

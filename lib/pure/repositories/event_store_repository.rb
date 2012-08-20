@@ -2,12 +2,12 @@ module Pure
 	module Repositories
 		class EventStoreRepository
 
-			def self.for_aggregate_root(aggregate_root_class)
-				new(aggregate_root_class)
+			def self.for_aggregate_root(aggregate_root_klass)
+				new(aggregate_root_klass)
 			end
 
-			def initialize(aggregate_root_class)
-				@aggregate_root_class = aggregate_root_class
+			def initialize(aggregate_root_klass)
+				@aggregate_root_klass = aggregate_root_klass
 			end
 
 			def save(aggregate_root)
@@ -21,7 +21,13 @@ module Pure
         event_list.each do |event|
           Pure.config.event_bus.publish(event)
         end
-			end
+      end
+
+      def get_by_id(id)
+        previous_events = Pure.config.event_store.get_by_id(id)
+
+        @aggregate_root_klass.recreate(previous_events)
+      end
 		end
 	end
 end

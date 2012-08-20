@@ -1,7 +1,7 @@
 require 'spec_helper'
+require 'pure/event_bus/blocking_event_bus'
 require 'fake_listener'
 require 'pure/domain/event'
-require 'pure/event_bus/blocking_event_bus'
 
 describe 'Blocking event bus' do
   let(:event_bus) { Pure::EventBus::BlockingEventBus.new }

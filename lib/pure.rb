@@ -11,7 +11,7 @@ module Pure
   class Configuration
   	include Singleton
 
-  	attr_accessor :id_generator, :event_store
+  	attr_accessor :id_generator, :event_store, :event_bus
 
   	def id_generator
       if @id_generator.nil?
