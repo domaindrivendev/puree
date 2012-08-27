@@ -17,17 +17,20 @@ module Pure
 		end
 
 		def method_missing(method, *args, &block)
-			self.class.aggregate_root_klasses.each do |klass|
-				name = klass.name.split('::').last
-				underscored_name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
 
-				if method.to_s == "create_#{underscored_name}"
-          id = Pure.config.id_generator.next_id(klass.name)
-					return klass.create(id, args[0])
-				elsif method.to_s == "#{underscored_name}_repository"
-					return Repositories::EventStoreRepository.for_aggregate_root(klass)
-				end
-			end
+      unless self.class.aggregate_root_klasses.nil?
+        self.class.aggregate_root_klasses.each do |klass|
+          name = klass.name.split('::').last
+          underscored_name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
+
+          if method.to_s == "create_#{underscored_name}"
+            id = Pure.config.id_generator.next_id(klass.name)
+            return klass.create(id, args[0])
+          elsif method.to_s == "#{underscored_name}_repository"
+            return Repositories::EventStoreRepository.for_aggregate_root(klass)
+          end
+        end
+      end
 
 			super.method_missing(method, args, block)
 		end
