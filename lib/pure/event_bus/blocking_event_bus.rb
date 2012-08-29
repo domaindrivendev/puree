@@ -1,4 +1,4 @@
-require 'pure/event_bus/listener'
+require 'pure/event_bus/subscriber'
 
 module Pure
   module EventBus
@@ -6,22 +6,25 @@ module Pure
     class BlockingEventBus
 
       def initialize
-        @all_listeners = {}
+        @subscribers = {}
       end
 
-      def register_listener(listener)
-        event_name = listener.event_name
+      def register(subscriber)
+        subscriber.class.event_handlers.keys.each do |event_name|
+          @subscribers[event_name] ||= []
+          @subscribers[event_name] << subscriber
+      end
 
-        @all_listeners[event_name] = [] unless @all_listeners.has_key?(event_name)
-        @all_listeners[event_name] << listener
       end
 
       def publish(event)
-        listeners = @all_listeners[event.name]
+        event_subscribers = @subscribers[event.name]
 
-        return if listeners.nil?
-
-        listeners.each { |listener| listener.notify(event) }
+        unless event_subscribers.nil?
+          event_subscribers.each do |subscriber|
+            subscriber.notify(event)
+          end
+        end
       end
 
     end
