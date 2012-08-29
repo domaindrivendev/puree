@@ -8,13 +8,13 @@ describe 'a blocking event bus' do
 
   context 'with one or more subscribers registered for an event' do
     class Subscriber1 < Pure::EventBus::Subscriber
-      on_event :some_event do |attributes|
+      on_event :some_event do |event|
         $handlers_executed += 1
       end
     end
 
     class Subscriber2 < Pure::EventBus::Subscriber
-      on_event :some_event do |attributes|
+      on_event :some_event do |event|
         $handlers_executed += 1
       end
     end

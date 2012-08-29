@@ -25,7 +25,7 @@ module Pure
           raise "Can't recreate when initial event is not #{created_event_name}"
         end
 
-        instance = create(created_event.aggregate_root_id, created_event.attributes)
+        instance = create(created_event.aggregate_id, created_event.attributes)
         instance.replay_events(previous_events.drop(1))
         instance.instance_variable_set(:@event_list, [])
 

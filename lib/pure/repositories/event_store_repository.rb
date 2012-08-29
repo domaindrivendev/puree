@@ -24,7 +24,7 @@ module Pure
       end
 
       def get_by_id(id)
-        previous_events = Pure.config.event_store.get_by_aggregate_root_id(id)
+        previous_events = Pure.config.event_store.get_by_aggregate_id(id)
 
         @aggregate_root_klass.recreate(previous_events)
       end

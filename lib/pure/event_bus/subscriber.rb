@@ -24,7 +24,7 @@ module Pure
         return if self.class.event_handlers[event.name].nil?
         
         self.class.event_handlers[event.name].each do |handler|
-          instance_exec(event.attributes, &handler)
+          instance_exec(event, &handler)
         end
       end
     end
