@@ -1,5 +1,6 @@
 require 'singleton'
 require 'pure/version'
+require 'pure/domain/aggregate_root'
 require 'pure/event_bus/blocking_event_bus'
 
 module Pure
