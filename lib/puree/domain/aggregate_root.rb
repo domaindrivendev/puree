@@ -1,7 +1,7 @@
-require 'pure/domain/entity'
-require 'pure/domain/event'
+require 'puree/domain/entity'
+require 'puree/domain/event'
 
-module Pure
+module Puree
 	module Domain
 		class AggregateRoot < Entity
 
@@ -9,7 +9,7 @@ module Pure
         instance = new(id, attributes)
 
         # Inject event_list, including initial 'creation' event
-        event_list = [ Pure::Domain::Event.new(id, created_event_name, attributes) ]
+        event_list = [ Puree::Domain::Event.new(id, created_event_name, attributes) ]
         instance.instance_variable_set(:@event_list, event_list)
 
         instance

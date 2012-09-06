@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pure (0.0.1)
+    puree (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -20,5 +20,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  pure!
+  puree!
   rspec

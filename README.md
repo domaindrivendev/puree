@@ -1,4 +1,4 @@
-# Pure
+# Puree
 
 Lightweight framework for creating DDD / CQRS based apps with a pure domain model of plain old ruby objects (PORO's)
 
@@ -6,7 +6,7 @@ Lightweight framework for creating DDD / CQRS based apps with a pure domain mode
 
 Add this line to your application's Gemfile:
 
-    gem 'pure'
+    gem 'puree'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install pure
+    $ gem install puree
 
 ## Usage
 

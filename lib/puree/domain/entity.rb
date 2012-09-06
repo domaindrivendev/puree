@@ -1,4 +1,4 @@
-module Pure
+module Puree
   module Domain
     class Entity
 
@@ -21,7 +21,7 @@ module Pure
       def signal_event(name, attributes={})
         exec_apply_event_block(name, attributes)
 
-        @event_list << Pure::Domain::Event.new(id, name, attributes)
+        @event_list << Puree::Domain::Event.new(id, name, attributes)
       end
 
       def pending_events

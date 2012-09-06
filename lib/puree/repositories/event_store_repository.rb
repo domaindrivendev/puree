@@ -1,4 +1,4 @@
-module Pure
+module Puree
 	module Repositories
 		class EventStoreRepository
 
@@ -15,16 +15,16 @@ module Pure
 
 				event_list.each do |event|
 					# TODO: Support for concurrency
-          Pure.config.event_store.save(event)
+          Puree.config.event_store.save(event)
 				end
 
         event_list.each do |event|
-          Pure.config.event_bus.publish(event)
+          Puree.config.event_bus.publish(event)
         end
       end
 
       def get_by_id(id)
-        previous_events = Pure.config.event_store.get_by_aggregate_id(id)
+        previous_events = Puree.config.event_store.get_by_aggregate_id(id)
 
         @aggregate_root_klass.recreate(previous_events)
       end

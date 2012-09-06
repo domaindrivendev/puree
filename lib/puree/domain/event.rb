@@ -1,4 +1,4 @@
-module Pure
+module Puree
   module Domain
     class Event
 

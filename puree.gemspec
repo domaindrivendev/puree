@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/pure/version', __FILE__)
+require File.expand_path('../lib/puree/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Richard Morris"]
@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "pure"
+  gem.name          = "puree"
   gem.require_paths = ["lib"]
-  gem.version       = Pure::VERSION
+  gem.version       = Puree::VERSION
 end

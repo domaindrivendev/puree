@@ -1,6 +1,6 @@
-require 'pure/event_bus/subscriber'
+require 'puree/event_bus/subscriber'
 
-module Pure
+module Puree
   module EventBus
 
     class BlockingEventBus

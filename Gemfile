@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in pure.gemspec
+# Specify your gem's dependencies in puree.gemspec
 gemspec
 
 group :test do

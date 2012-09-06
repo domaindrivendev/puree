@@ -1,6 +1,6 @@
-require 'pure/repositories/event_store_repository'
+require 'puree/repositories/event_store_repository'
 
-module Pure
+module Puree
 	module Commanding
 		module ClassMethods
 
@@ -24,7 +24,7 @@ module Pure
           underscored_name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
 
           if method.to_s == "create_#{underscored_name}"
-            id = Pure.config.id_generator.next_id(klass.name)
+            id = Puree.config.id_generator.next_id(klass.name)
             return klass.create(id, args[0])
           elsif method.to_s == "#{underscored_name}_repository"
             return Repositories::EventStoreRepository.for_aggregate_root(klass)
