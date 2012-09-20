@@ -1,45 +1,44 @@
-require 'puree/domain/entity'
-require 'puree/domain/event'
-
 module Puree
 	module Domain
+
 		class AggregateRoot < Entity
+			def initialize(id)
+				super(id, nil)
+			end
 
-      def self.create(id, attributes)
-        instance = new(id, attributes)
+      def replay_events(events)
+        events.each do |event|
+          entity = find_entity(self, event.source_id, event.source_class_name)
+          if entity.nil?
+            attributes = "aggregate_root_id: #{event.aggregate_root_id}, id: #{event.source_id}, class_name: #{event.source_class_name}" 
+            raise "Failed to replay event - no entity found with #{attributes}"
+          end
 
-        # Inject event_list, including initial 'creation' event
-        event_list = [ Puree::Domain::Event.new(id, created_event_name, attributes) ]
-        instance.instance_variable_set(:@event_list, event_list)
-
-        instance
-      end
-
-      def self.recreate(previous_events)
-        if previous_events.nil? or previous_events.length == 0
-          raise "Can't recreate without any previous events"
+          entity.send(:apply_event, event)
         end
+      end
 
-        created_event = previous_events.first
-        if created_event.name != created_event_name
-          raise "Can't recreate when initial event is not #{created_event_name}"
+      def find_entity(root, id, class_name)
+        # TODO: Optimize search algorithm
+        if root.id == id and root.class.name == class_name
+          return root
+        else
+          get_sub_entities(root).each do |sub_entity|
+            entity = find_entity(sub_entity, id, class_name)
+            return entity unless entity.nil?
+          end
         end
-
-        instance = create(created_event.aggregate_id, created_event.attributes)
-        instance.replay_events(previous_events.drop(1))
-        instance.instance_variable_set(:@event_list, [])
-
-        instance
+        nil
       end
 
-      private
-
-      def self.created_event_name
-        name = self.name.split('::').last
-        underscored_name = name.gsub(/(.)([A-Z])/, '\1_\2').downcase
-        "#{underscored_name}_created".to_sym
+      def get_sub_entities(parent)
+        sub_entities = parent.instance_variable_get(:@entities).values
+        parent.instance_variable_get(:@entity_collections).values.each do |collection|
+          sub_entities.concat(collection)
+        end
+        sub_entities
       end
-
 		end
+    
 	end
 end

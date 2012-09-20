@@ -1,7 +1,14 @@
 require 'singleton'
 require 'puree/version'
+require 'puree/domain/event'
+require 'puree/domain/entity'
+require 'puree/domain/entity_collection'
 require 'puree/domain/aggregate_root'
-require 'puree/event_bus/blocking_event_bus'
+require 'puree/domain/aggregate_root_factory'
+require 'puree/persistence/event_store_repository'
+require 'puree/persistence/memory_event_store'
+require 'puree/event_bus/subscriber'
+require 'puree/event_bus/memory_event_bus'
 
 module Puree
 
@@ -26,10 +33,6 @@ module Puree
         raise 'Puree.config.event_store has not been configured'
       end
       @event_store
-    end
-
-    def event_bus
-      @event_bus ||= Puree::EventBus::BlockingEventBus.new
     end
 
   end

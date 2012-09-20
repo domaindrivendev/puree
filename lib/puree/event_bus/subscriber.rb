@@ -4,15 +4,16 @@ module Puree
     class Subscriber
 
       module ClassMethods
-        attr_reader :event_handlers
-
-        def on_event(event_name, &block)
-          event_handlers[event_name] ||= []
-          event_handlers[event_name] << block
+        def on_event(name, &block)
+          on_event_blocks[name] = block
         end
 
-        def event_handlers
-          @event_handlers ||= {}
+        def event_names
+          on_event_blocks.keys
+        end
+
+        def on_event_blocks
+          @on_event_blocks ||= {}
         end
       end
 
@@ -20,13 +21,18 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      def notify(event)
-        return if self.class.event_handlers[event.name].nil?
-        
-        self.class.event_handlers[event.name].each do |handler|
-          instance_exec(event, &handler)
-        end
+      def event_names
+        self.class.event_names
       end
+
+      def notify(event)
+        on_event_blocks = self.class.on_event_blocks
+        if on_event_blocks[event.name].nil?
+          raise "Failed to handle event - no on_event block found for #{event.name}"
+        end
+        instance_exec(event, &on_event_blocks[event.name])
+      end
+
     end
 
   end
