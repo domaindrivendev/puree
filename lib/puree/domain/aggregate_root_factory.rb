@@ -17,6 +17,10 @@ module Puree
         klass.extend(ClassMethods)
       end
 
+      def initialize(id_generator)
+        @id_generator = id_generator
+      end
+
       def signal_event(name, attributes={})
         event = Puree::Domain::Event.new(attributes[:id], nil, self.class.name, name, attributes)
         aggregate_root = apply_event(event)
@@ -34,6 +38,10 @@ module Puree
         end
 
         apply_event(creation_event)
+      end
+
+      def next_id
+        @id_generator.next_id(self.class.name)
       end
 
       private

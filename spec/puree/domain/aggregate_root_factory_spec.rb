@@ -17,7 +17,7 @@ describe 'An Aggregate Root Factory' do
 		let(:factory) do
 			class OrderFactory < Puree::Domain::AggregateRootFactory
 				def create(name)
-					signal_event :order_created, id: 123, name: name
+					signal_event :order_created, id: next_id, name: name
 				end
 
 				apply_event :order_created do |event|
@@ -25,7 +25,7 @@ describe 'An Aggregate Root Factory' do
 				end
 			end
 
-			OrderFactory.new()
+			OrderFactory.new(Puree::Persistence::MemoryIdGenerator.new)
 		end
 
 		context 'when the factory method is called' do
@@ -33,16 +33,16 @@ describe 'An Aggregate Root Factory' do
 
 			it 'should create an Aggregate Root with the creation Event tracked' do
 				order.should be_an_instance_of(Order)
-				order.aggregate_root_id.should == 123
-				order.id.should == 123
+				order.aggregate_root_id.should == 1
+				order.id.should == 1
 				order.instance_variable_get(:@name).should == 'order1'
 
 				order.pending_events.length.should == 1
-				order.pending_events[0].aggregate_root_id.should == 123
+				order.pending_events[0].aggregate_root_id.should == 1
 				order.pending_events[0].source_id.should be_nil
 				order.pending_events[0].source_class_name.should == 'OrderFactory'
 				order.pending_events[0].name.should == :order_created
-				order.pending_events[0].attributes.should == { id: 123, name: 'order1' }
+				order.pending_events[0].attributes.should == { id: 1, name: 'order1' }
 			end
 		end
 

@@ -27,7 +27,7 @@ describe 'An Event Store Repository' do
 			end
 		end
 
-		@factory = OrderFactory.new
+		@factory = OrderFactory.new(Puree::Persistence::MemoryIdGenerator.new)
 		@event_store = Puree::Persistence::MemoryEventStore.new()
 		@event_bus = Puree::EventBus::MemoryEventBus.new()
 		@repository = Puree::Persistence::EventStoreRepository.new(@factory, @event_store, @event_bus)
@@ -74,6 +74,8 @@ describe 'An Event Store Repository' do
 		it 'should recreate the Aggregate Root from persisted Events ' do
 			@order.should be_an_instance_of(Order)
 			@order.pending_events.length.should == 0
+			@order.aggregate_root_id.should == 123
+			@order.id.should == 123
 			@order.instance_variable_get(:@name).should == 'order2'
 		end
 	end
