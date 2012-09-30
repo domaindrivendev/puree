@@ -16,6 +16,10 @@ module Puree
 					event.aggregate_root_id == aggregate_root_id
 				end
 			end
+
+			def reset
+				@events.clear
+			end
 			
 		end
 

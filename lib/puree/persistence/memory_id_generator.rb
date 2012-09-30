@@ -15,6 +15,10 @@
 					@id_counters[factory_class_name] += 1
 				end
 
+				def reset
+					@id_counters.clear
+				end
+
 			end
 
 		end
