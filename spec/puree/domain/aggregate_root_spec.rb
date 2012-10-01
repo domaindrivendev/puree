@@ -13,15 +13,15 @@ describe 'An Aggregate Root and associated Entities' do
 		end
 
 		class Header < Puree::Domain::Entity
-			def initialize(id, parent, title)
-				super(id, parent)
+			def initialize(id, title)
+				super(id)
 				@title = title
 			end
 		end
 
 		class OrderItem < Puree::Domain::Entity
-			def initialize(id, parent, name, quantity)
-				super(id, parent)
+			def initialize(id, name, quantity)
+				super(id)
 				@name = name
 				@quantity = quantity
 			end
@@ -36,11 +36,11 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 
 				def create_header(title)
-					signal_event :header_created, id: 123, title: title  
+					signal_event :header_created, id: 1, title: title  
 				end
 
 				def add_item(name, quantity)
-					signal_event :item_added, id: 456, name: name, quantity: quantity
+					signal_event :item_added, id: 1, name: name, quantity: quantity
 				end
 
 				def change_title(title)
@@ -48,7 +48,7 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 
 				def change_item_quantity(item_id, quantity)
-					item = items.find { |item| item.id == item_id }
+					item = items.find_by_id(item_id)
 					item.change_quantity(quantity)
 				end
 
@@ -57,11 +57,14 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 
 				apply_event :header_created do |event|
-					set_header(Header.new(event.attributes[:id], self, event.attributes[:title]))
+					set_header(Header.new(event.attributes[:id], event.attributes[:title]))
 				end
 
 				apply_event :item_added do |event|
-					items << OrderItem.new(event.attributes[:id], self, event.attributes[:name], event.attributes[:quantity])
+					items << OrderItem.new(
+						event.attributes[:id],
+						event.attributes[:name],
+						event.attributes[:quantity])
 				end
 			end
 
@@ -85,7 +88,7 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 			end
 
-			Order.new(1, 'order1')
+			order = Order.new(1, 'order1')
 		end
 
 		context 'when state-changing methods are called' do
@@ -94,7 +97,7 @@ describe 'An Aggregate Root and associated Entities' do
 				order.create_header('header1')
 				order.add_item('item1', 2)
 				order.change_title('header2')
-				order.change_item_quantity(456, 3)
+				order.change_item_quantity(1, 3)
 			end
 
 			it 'should apply all Events that occur within the Aggregate' do
@@ -116,19 +119,19 @@ describe 'An Aggregate Root and associated Entities' do
 				order.pending_events[1].source_id.should == 1
 				order.pending_events[1].source_class_name.should == 'Order'
 				order.pending_events[1].name.should == :header_created
-				order.pending_events[1].attributes.should == { id: 123, title: 'header1' }
+				order.pending_events[1].attributes.should == { id: 1, title: 'header1' }
 				order.pending_events[2].aggregate_root_id.should == 1
 				order.pending_events[2].source_id.should == 1
 				order.pending_events[2].source_class_name.should == 'Order'
 				order.pending_events[2].name.should == :item_added
-				order.pending_events[2].attributes.should == { id: 456, name: 'item1', quantity: 2 }
+				order.pending_events[2].attributes.should == { id: 1, name: 'item1', quantity: 2 }
 				order.pending_events[3].aggregate_root_id.should == 1
-				order.pending_events[3].source_id.should == 123
+				order.pending_events[3].source_id.should == 1
 				order.pending_events[3].source_class_name.should == 'Header'
 				order.pending_events[3].name.should == :title_changed
 				order.pending_events[3].attributes.should == { from: 'header1', to: 'header2' }
 				order.pending_events[4].aggregate_root_id.should == 1
-				order.pending_events[4].source_id.should == 456
+				order.pending_events[4].source_id.should == 1
 				order.pending_events[4].source_class_name.should == 'OrderItem'
 				order.pending_events[4].name.should == :quantity_changed
 				order.pending_events[4].attributes.should == { from: 2, to: 3 }
@@ -139,10 +142,10 @@ describe 'An Aggregate Root and associated Entities' do
 			before(:each) do
 				events = [
 					Puree::Domain::Event.new(1, 1, 'Order', :name_changed, { from: 'order1', to: 'order2' }),
-					Puree::Domain::Event.new(1, 1, 'Order', :header_created, { id: 123, title: 'header1' }),
-					Puree::Domain::Event.new(1, 1, 'Order', :item_added, { id: 456, name: 'item1', quantity: 2 }),
-					Puree::Domain::Event.new(1, 123, 'Header', :title_changed, { from: 'header1', to: 'header2' }),
-					Puree::Domain::Event.new(1, 456, 'OrderItem', :quantity_changed, { from: 2, to: 3 })
+					Puree::Domain::Event.new(1, 1, 'Order', :header_created, { id: 1, title: 'header1' }),
+					Puree::Domain::Event.new(1, 1, 'Order', :item_added, { id: 1, name: 'item1', quantity: 2 }),
+					Puree::Domain::Event.new(1, 1, 'Header', :title_changed, { from: 'header1', to: 'header2' }),
+					Puree::Domain::Event.new(1, 1, 'OrderItem', :quantity_changed, { from: 2, to: 3 })
 				]
 				order.replay_events(events)
 			end

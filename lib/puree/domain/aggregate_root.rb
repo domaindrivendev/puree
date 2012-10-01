@@ -3,7 +3,9 @@ module Puree
 
 		class AggregateRoot < Entity
 			def initialize(id)
-				super(id, nil)
+				super(id)
+        @aggregate_root = self
+        @event_list = []
 			end
 
       def replay_events(events)
@@ -34,7 +36,7 @@ module Puree
       def get_sub_entities(parent)
         sub_entities = parent.instance_variable_get(:@entities).values
         parent.instance_variable_get(:@entity_collections).values.each do |collection|
-          sub_entities.concat(collection)
+          sub_entities.concat(collection.to_array)
         end
         sub_entities
       end

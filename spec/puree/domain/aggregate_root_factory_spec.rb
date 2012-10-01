@@ -33,7 +33,6 @@ describe 'An Aggregate Root Factory' do
 
 			it 'should create an Aggregate Root with the creation Event tracked' do
 				order.should be_an_instance_of(Order)
-				order.aggregate_root_id.should == 1
 				order.id.should == 1
 				order.instance_variable_get(:@name).should == 'order1'
 
@@ -48,14 +47,13 @@ describe 'An Aggregate Root Factory' do
 
 		context 'when the recreate method is called' do
 			let(:order) do
-				creation_event = Puree::Domain::Event.new(1, nil, 'OrderFactory', :order_created, { id: 123, name: 'order1' } )
+				creation_event = Puree::Domain::Event.new(1, nil, 'OrderFactory', :order_created, { id: 1, name: 'order1' } )
 				factory.recreate(creation_event)
 			end
 
 			it 'should recreate the Aggregate Root by re-applying the creation Event' do
 				order.should be_an_instance_of(Order)
-				order.aggregate_root_id.should == 123
-				order.id.should == 123
+				order.id.should == 1
 				order.instance_variable_get(:@name).should == 'order1'
 			end
 		end

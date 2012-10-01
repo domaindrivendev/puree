@@ -33,29 +33,27 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      attr_reader :aggregate_root_id, :id, :parent
+      attr_reader :id
 
-      def initialize(id, parent=nil)
+      def initialize(id)
         @id = id
-        @parent = parent
-
-        if parent.nil? # i.e. this is the aggregate root
-          @aggregate_root_id = @id
-          @event_list = []
-        else
-          @aggregate_root_id = parent.aggregate_root_id
-          @event_list = parent.instance_variable_get(:@event_list)
-        end
-
         @entities ||= {}
         @entity_collections ||= {}
+
+        @aggregate_root = nil
+        # If part of aggregate, then parent must inject aggregate root reference
       end
 
       def signal_event(name, attributes={})
-        event = Puree::Domain::Event.new(aggregate_root_id, id, self.class.name, name, attributes)
+        if @aggregate_root.nil?
+          raise 'TODO: aggregate root not set'
+        end
+
+        event = Puree::Domain::Event.new(@aggregate_root.id, id, self.class.name, name, attributes)
         apply_event(event)
 
-        @event_list << event
+        event_list = @aggregate_root.instance_variable_get(:@event_list)
+        event_list << event
       end
 
       def pending_events
@@ -71,14 +69,17 @@ module Puree
         if one_to_one_associations.include?(method_name) and @entities.has_key?(method_name)
           return @entities[method_name]
         elsif one_to_many_associations.include?(method_name)
-          return @entity_collections[method_name] ||= []
+          return @entity_collections[method_name] ||= EntityCollection.new(@aggregate_root)
         end
 
         # one to one asssociation setters
         if method_name.start_with?('set_')
           association = method_name[4..-1]
           if one_to_one_associations.include?(association)
-            return @entities[association] = args[0]
+            entity = args[0]
+            entity.instance_variable_set(:@aggregate_root, @aggregate_root)
+            @entities[association] = entity
+            return entity
           end
         end
 

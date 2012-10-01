@@ -4,7 +4,7 @@ describe 'An Event Store Repository' do
 	before(:each) do
 		class OrderFactory < Puree::Domain::AggregateRootFactory
 			def create(name)
-				signal_event :order_created, id: 123, name: name
+				signal_event :order_created, id: next_id, name: name
 			end
 
 			apply_event :order_created do |event|
@@ -41,17 +41,17 @@ describe 'An Event Store Repository' do
 			@repository.save(@order)
 		end
 
-		it 'should persist all pending Events in the Aggregate Root' do
+		it 'should persist all pending Events from the Aggregate Root' do
 			persisted_events = @event_store.get_by_aggregate_root_id(@order.id)
 
 			persisted_events.length.should == 2
-			persisted_events[0].aggregate_root_id.should == 123
+			persisted_events[0].aggregate_root_id.should == 1
 			persisted_events[0].source_id.should == nil
 			persisted_events[0].source_class_name.should == 'OrderFactory'
 			persisted_events[0].name.should == :order_created
-			persisted_events[0].attributes.should == { id: 123, name: 'order1' }
-			persisted_events[1].aggregate_root_id.should == 123
-			persisted_events[1].source_id.should == 123
+			persisted_events[0].attributes.should == { id: 1, name: 'order1' }
+			persisted_events[1].aggregate_root_id.should == 1
+			persisted_events[1].source_id.should == 1
 			persisted_events[1].source_class_name.should == 'Order'
 			persisted_events[1].name.should == :name_changed
 			persisted_events[1].attributes.should == { from: 'order1', to: 'order2' }
@@ -61,21 +61,20 @@ describe 'An Event Store Repository' do
 	context 'when the get_by_id method is called' do
 		before(:each) do
 			events = [
-				Puree::Domain::Event.new(123, nil, 'OrderFactory', :order_created, { id: 123, name: 'order1' }),
-				Puree::Domain::Event.new(123, 123, 'Order', :name_changed, { from: 'order1', to: 'order2' })
+				Puree::Domain::Event.new(1, nil, 'OrderFactory', :order_created, { id: 1, name: 'order1' }),
+				Puree::Domain::Event.new(1, 1, 'Order', :name_changed, { from: 'order1', to: 'order2' })
 			]
 			events.each do |event|
 				@event_store.save(event)
 			end
 		
-			@order = @repository.get_by_id(123)
+			@order = @repository.get_by_id(1)
 		end
 
 		it 'should recreate the Aggregate Root from persisted Events ' do
 			@order.should be_an_instance_of(Order)
 			@order.pending_events.length.should == 0
-			@order.aggregate_root_id.should == 123
-			@order.id.should == 123
+			@order.id.should == 1
 			@order.instance_variable_get(:@name).should == 'order2'
 		end
 	end
