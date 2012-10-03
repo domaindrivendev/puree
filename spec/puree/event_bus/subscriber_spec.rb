@@ -27,8 +27,8 @@ describe 'A Subscriber' do
 
 		context 'when the notify method is called' do
 			before(:each) do
-				@event1 = Puree::Domain::Event.new(123, nil, 'OrderFactory', :order_created, { id: 123, name: 'order1' })
-				@event2 = Puree::Domain::Event.new(123, 123, 'Order', :name_changed, { from: 'order1', to: 'order2' })
+				@event1 = Puree::Domain::Event.new('Order', 123, 'OrderFactory', nil, :order_created, { id: 123, name: 'order1' })
+				@event2 = Puree::Domain::Event.new('Order', 123, 'Order', 123, :name_changed, { from: 'order1', to: 'order2' })
 
 				subscriber.notify(@event1)
 				subscriber.notify(@event2)

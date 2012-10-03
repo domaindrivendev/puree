@@ -110,29 +110,34 @@ describe 'An Aggregate Root and associated Entities' do
 
 			it 'should track all Events that occur within the Aggregate' do
 				order.pending_events.length.should == 5
+				order.pending_events[0].aggregate_root_class_name.should == 'Order'
 				order.pending_events[0].aggregate_root_id.should == 1
-				order.pending_events[0].source_id.should == 1
 				order.pending_events[0].source_class_name.should == 'Order'
+				order.pending_events[0].source_id.should == 1
 				order.pending_events[0].name.should == :name_changed
 				order.pending_events[0].args.should == { from: 'order1', to: 'order2' }
+				order.pending_events[0].aggregate_root_class_name.should == 'Order'
 				order.pending_events[1].aggregate_root_id.should == 1
-				order.pending_events[1].source_id.should == 1
 				order.pending_events[1].source_class_name.should == 'Order'
+				order.pending_events[1].source_id.should == 1
 				order.pending_events[1].name.should == :header_created
 				order.pending_events[1].args.should == { id: 1, title: 'header1' }
+				order.pending_events[0].aggregate_root_class_name.should == 'Order'
 				order.pending_events[2].aggregate_root_id.should == 1
-				order.pending_events[2].source_id.should == 1
 				order.pending_events[2].source_class_name.should == 'Order'
+				order.pending_events[2].source_id.should == 1
 				order.pending_events[2].name.should == :item_added
 				order.pending_events[2].args.should == { id: 1, name: 'item1', quantity: 2 }
+				order.pending_events[0].aggregate_root_class_name.should == 'Order'
 				order.pending_events[3].aggregate_root_id.should == 1
-				order.pending_events[3].source_id.should == 1
 				order.pending_events[3].source_class_name.should == 'Header'
+				order.pending_events[3].source_id.should == 1
 				order.pending_events[3].name.should == :title_changed
 				order.pending_events[3].args.should == { from: 'header1', to: 'header2' }
+				order.pending_events[0].aggregate_root_class_name.should == 'Order'
 				order.pending_events[4].aggregate_root_id.should == 1
-				order.pending_events[4].source_id.should == 1
 				order.pending_events[4].source_class_name.should == 'OrderItem'
+				order.pending_events[4].source_id.should == 1
 				order.pending_events[4].name.should == :quantity_changed
 				order.pending_events[4].args.should == { from: 2, to: 3 }
 			end
@@ -141,11 +146,11 @@ describe 'An Aggregate Root and associated Entities' do
 		context 'when the replay_events method is called' do
 			before(:each) do
 				events = [
-					Puree::Domain::Event.new(1, 1, 'Order', :name_changed, { from: 'order1', to: 'order2' }),
-					Puree::Domain::Event.new(1, 1, 'Order', :header_created, { id: 1, title: 'header1' }),
-					Puree::Domain::Event.new(1, 1, 'Order', :item_added, { id: 1, name: 'item1', quantity: 2 }),
-					Puree::Domain::Event.new(1, 1, 'Header', :title_changed, { from: 'header1', to: 'header2' }),
-					Puree::Domain::Event.new(1, 1, 'OrderItem', :quantity_changed, { from: 2, to: 3 })
+					Puree::Domain::Event.new('Order', 1, 'Order', 1, :name_changed, { from: 'order1', to: 'order2' }),
+					Puree::Domain::Event.new('Order', 1, 'Order', 1, :header_created, { id: 1, title: 'header1' }),
+					Puree::Domain::Event.new('Order', 1, 'Order', 1, :item_added, { id: 1, name: 'item1', quantity: 2 }),
+					Puree::Domain::Event.new('Order', 1, 'Header', 1, :title_changed, { from: 'header1', to: 'header2' }),
+					Puree::Domain::Event.new('Order', 1, 'OrderItem', 1, :quantity_changed, { from: 2, to: 3 })
 				]
 				order.replay_events(events)
 			end

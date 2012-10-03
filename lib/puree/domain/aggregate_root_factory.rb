@@ -17,12 +17,15 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      def initialize(id_generator)
+      attr_reader :aggregate_root_class
+
+      def initialize(aggregate_root_class, id_generator)
+        @aggregate_root_class = aggregate_root_class
         @id_generator = id_generator
       end
 
       def signal_event(name, args={})
-        event = Puree::Domain::Event.new(args[:id], nil, self.class.name, name, args)
+        event = Puree::Domain::Event.new(@aggregate_root_class.name, args[:id], self.class.name, nil, name, args)
         aggregate_root = apply_event(event)
 
         # Inject the creation event

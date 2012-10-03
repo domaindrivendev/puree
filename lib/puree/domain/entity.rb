@@ -49,7 +49,7 @@ module Puree
           raise 'TODO: aggregate root not set'
         end
 
-        event = Puree::Domain::Event.new(@aggregate_root.id, id, self.class.name, name, args)
+        event = Puree::Domain::Event.new(@aggregate_root.class.name, @aggregate_root.id, self.class.name, id, name, args)
         apply_event(event)
 
         event_list = @aggregate_root.instance_variable_get(:@event_list)

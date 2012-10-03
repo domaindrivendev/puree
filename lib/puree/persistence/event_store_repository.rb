@@ -22,7 +22,7 @@ module Puree
       end
 
 			def get_by_id(aggregate_root_id)
-				events = @event_store.get_by_aggregate_root_id(aggregate_root_id)
+				events = @event_store.get_aggregate_root_events(@factory.aggregate_root_class.name, aggregate_root_id)
         
         aggregate_root = @factory.recreate(events.first)
         aggregate_root.replay_events(events.drop(1))

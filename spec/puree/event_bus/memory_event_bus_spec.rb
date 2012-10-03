@@ -24,7 +24,7 @@ describe 'A Memory Event Bus' do
 
 		context 'when that Event is published' do
 			before(:each) do
-				@test_event = Puree::Domain::Event.new(123, nil, 'OrderFactory', :order_created, { id: 123, name: 'order1' })
+				@test_event = Puree::Domain::Event.new('Order', 123, 'OrderFactory', nil, :order_created, { id: 123, name: 'order1' })
 				event_bus.publish(@test_event)
 			end
 

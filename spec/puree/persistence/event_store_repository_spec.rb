@@ -27,7 +27,7 @@ describe 'An Event Store Repository' do
 			end
 		end
 
-		@factory = OrderFactory.new(Puree::Persistence::MemoryIdGenerator.new)
+		@factory = OrderFactory.new(Order, Puree::Persistence::MemoryIdGenerator.new)
 		@event_store = Puree::Persistence::MemoryEventStore.new()
 		@event_bus = Puree::EventBus::MemoryEventBus.new()
 		@repository = Puree::Persistence::EventStoreRepository.new(@factory, @event_store, @event_bus)
@@ -42,17 +42,19 @@ describe 'An Event Store Repository' do
 		end
 
 		it 'should persist all pending Events from the Aggregate Root' do
-			persisted_events = @event_store.get_by_aggregate_root_id(@order.id)
+			persisted_events = @event_store.get_aggregate_root_events('Order', @order.id)
 
 			persisted_events.length.should == 2
+			persisted_events[0].aggregate_root_class_name.should == 'Order'
 			persisted_events[0].aggregate_root_id.should == 1
-			persisted_events[0].source_id.should == nil
 			persisted_events[0].source_class_name.should == 'OrderFactory'
+			persisted_events[0].source_id.should == nil
 			persisted_events[0].name.should == :order_created
 			persisted_events[0].args.should == { id: 1, name: 'order1' }
+			persisted_events[0].aggregate_root_class_name.should == 'Order'
 			persisted_events[1].aggregate_root_id.should == 1
-			persisted_events[1].source_id.should == 1
 			persisted_events[1].source_class_name.should == 'Order'
+			persisted_events[1].source_id.should == 1
 			persisted_events[1].name.should == :name_changed
 			persisted_events[1].args.should == { from: 'order1', to: 'order2' }
 		end
@@ -61,8 +63,8 @@ describe 'An Event Store Repository' do
 	context 'when the get_by_id method is called' do
 		before(:each) do
 			events = [
-				Puree::Domain::Event.new(1, nil, 'OrderFactory', :order_created, { id: 1, name: 'order1' }),
-				Puree::Domain::Event.new(1, 1, 'Order', :name_changed, { from: 'order1', to: 'order2' })
+				Puree::Domain::Event.new('Order', 1, 'OrderFactory', nil, :order_created, { id: 1, name: 'order1' }),
+				Puree::Domain::Event.new('Order', 1, 'Order', 1, :name_changed, { from: 'order1', to: 'order2' })
 			]
 			events.each do |event|
 				@event_store.save(event)
