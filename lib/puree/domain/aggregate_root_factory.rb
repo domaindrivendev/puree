@@ -21,8 +21,8 @@ module Puree
         @id_generator = id_generator
       end
 
-      def signal_event(name, attributes={})
-        event = Puree::Domain::Event.new(attributes[:id], nil, self.class.name, name, attributes)
+      def signal_event(name, args={})
+        event = Puree::Domain::Event.new(args[:id], nil, self.class.name, name, args)
         aggregate_root = apply_event(event)
 
         # Inject the creation event

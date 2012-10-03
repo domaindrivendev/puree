@@ -8,7 +8,7 @@ describe 'An Event Store Repository' do
 			end
 
 			apply_event :order_created do |event|
-				Order.new(event.attributes[:id], event.attributes[:name])
+				Order.new(event.args[:id], event.args[:name])
 			end
 		end
 
@@ -23,7 +23,7 @@ describe 'An Event Store Repository' do
 			end
 
 			apply_event :name_changed do |event|
-				@name = event.attributes[:to]
+				@name = event.args[:to]
 			end
 		end
 
@@ -49,12 +49,12 @@ describe 'An Event Store Repository' do
 			persisted_events[0].source_id.should == nil
 			persisted_events[0].source_class_name.should == 'OrderFactory'
 			persisted_events[0].name.should == :order_created
-			persisted_events[0].attributes.should == { id: 1, name: 'order1' }
+			persisted_events[0].args.should == { id: 1, name: 'order1' }
 			persisted_events[1].aggregate_root_id.should == 1
 			persisted_events[1].source_id.should == 1
 			persisted_events[1].source_class_name.should == 'Order'
 			persisted_events[1].name.should == :name_changed
-			persisted_events[1].attributes.should == { from: 'order1', to: 'order2' }
+			persisted_events[1].args.should == { from: 'order1', to: 'order2' }
 		end
 	end
 

@@ -44,12 +44,12 @@ module Puree
         # If part of aggregate, then parent must inject aggregate root reference
       end
 
-      def signal_event(name, attributes={})
+      def signal_event(name, args={})
         if @aggregate_root.nil?
           raise 'TODO: aggregate root not set'
         end
 
-        event = Puree::Domain::Event.new(@aggregate_root.id, id, self.class.name, name, attributes)
+        event = Puree::Domain::Event.new(@aggregate_root.id, id, self.class.name, name, args)
         apply_event(event)
 
         event_list = @aggregate_root.instance_variable_get(:@event_list)

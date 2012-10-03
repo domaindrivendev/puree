@@ -21,7 +21,7 @@ describe 'An Aggregate Root Factory' do
 				end
 
 				apply_event :order_created do |event|
-					Order.new(event.attributes[:id], event.attributes[:name])
+					Order.new(event.args[:id], event.args[:name])
 				end
 			end
 
@@ -41,7 +41,7 @@ describe 'An Aggregate Root Factory' do
 				order.pending_events[0].source_id.should be_nil
 				order.pending_events[0].source_class_name.should == 'OrderFactory'
 				order.pending_events[0].name.should == :order_created
-				order.pending_events[0].attributes.should == { id: 1, name: 'order1' }
+				order.pending_events[0].args.should == { id: 1, name: 'order1' }
 			end
 		end
 

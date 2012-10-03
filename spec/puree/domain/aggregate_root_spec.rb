@@ -53,18 +53,18 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 
 				apply_event :name_changed do |event|
-					@name = event.attributes[:to]
+					@name = event.args[:to]
 				end
 
 				apply_event :header_created do |event|
-					set_header(Header.new(event.attributes[:id], event.attributes[:title]))
+					set_header(Header.new(event.args[:id], event.args[:title]))
 				end
 
 				apply_event :item_added do |event|
 					items << OrderItem.new(
-						event.attributes[:id],
-						event.attributes[:name],
-						event.attributes[:quantity])
+						event.args[:id],
+						event.args[:name],
+						event.args[:quantity])
 				end
 			end
 
@@ -74,7 +74,7 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 
 				apply_event :title_changed do |event|
-					@title = event.attributes[:to]
+					@title = event.args[:to]
 				end
 			end
 
@@ -84,7 +84,7 @@ describe 'An Aggregate Root and associated Entities' do
 				end
 
 				apply_event :quantity_changed do |event|
-					@quantity = event.attributes[:to]
+					@quantity = event.args[:to]
 				end
 			end
 
@@ -114,27 +114,27 @@ describe 'An Aggregate Root and associated Entities' do
 				order.pending_events[0].source_id.should == 1
 				order.pending_events[0].source_class_name.should == 'Order'
 				order.pending_events[0].name.should == :name_changed
-				order.pending_events[0].attributes.should == { from: 'order1', to: 'order2' }
+				order.pending_events[0].args.should == { from: 'order1', to: 'order2' }
 				order.pending_events[1].aggregate_root_id.should == 1
 				order.pending_events[1].source_id.should == 1
 				order.pending_events[1].source_class_name.should == 'Order'
 				order.pending_events[1].name.should == :header_created
-				order.pending_events[1].attributes.should == { id: 1, title: 'header1' }
+				order.pending_events[1].args.should == { id: 1, title: 'header1' }
 				order.pending_events[2].aggregate_root_id.should == 1
 				order.pending_events[2].source_id.should == 1
 				order.pending_events[2].source_class_name.should == 'Order'
 				order.pending_events[2].name.should == :item_added
-				order.pending_events[2].attributes.should == { id: 1, name: 'item1', quantity: 2 }
+				order.pending_events[2].args.should == { id: 1, name: 'item1', quantity: 2 }
 				order.pending_events[3].aggregate_root_id.should == 1
 				order.pending_events[3].source_id.should == 1
 				order.pending_events[3].source_class_name.should == 'Header'
 				order.pending_events[3].name.should == :title_changed
-				order.pending_events[3].attributes.should == { from: 'header1', to: 'header2' }
+				order.pending_events[3].args.should == { from: 'header1', to: 'header2' }
 				order.pending_events[4].aggregate_root_id.should == 1
 				order.pending_events[4].source_id.should == 1
 				order.pending_events[4].source_class_name.should == 'OrderItem'
 				order.pending_events[4].name.should == :quantity_changed
-				order.pending_events[4].attributes.should == { from: 2, to: 3 }
+				order.pending_events[4].args.should == { from: 2, to: 3 }
 			end
 		end
 
