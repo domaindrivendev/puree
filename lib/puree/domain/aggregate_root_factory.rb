@@ -25,8 +25,9 @@ module Puree
       end
 
       def signal_event(name, args={})
-        event = Puree::Domain::Event.new(@aggregate_root_class.name, args[:id], self.class.name, nil, name, args)
+        event = Puree::Domain::Event.new(@aggregate_root_class.name, nil, self.class.name, nil, name, args)
         aggregate_root = apply_event(event)
+        event.instance_variable_set(:@aggregate_root_id, aggregate_root.id)
 
         # Inject the creation event
         event_list = aggregate_root.instance_variable_get(:@event_list)

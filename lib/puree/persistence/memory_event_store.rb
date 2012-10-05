@@ -11,7 +11,7 @@ module Puree
 				@events << event
 			end
 
-			def get_aggregate_root_events(aggregate_root_class_name, aggregate_root_id)
+			def get_aggregate_events(aggregate_root_class_name, aggregate_root_id)
 				@events.find_all do |event|
 					event.aggregate_root_class_name == aggregate_root_class_name and
 					event.aggregate_root_id == aggregate_root_id

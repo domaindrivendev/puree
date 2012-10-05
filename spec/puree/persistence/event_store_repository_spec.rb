@@ -42,7 +42,7 @@ describe 'An Event Store Repository' do
 		end
 
 		it 'should persist all pending Events from the Aggregate Root' do
-			persisted_events = @event_store.get_aggregate_root_events('Order', @order.id)
+			persisted_events = @event_store.get_aggregate_events('Order', @order.id)
 
 			persisted_events.length.should == 2
 			persisted_events[0].aggregate_root_class_name.should == 'Order'
