@@ -2,44 +2,53 @@ module Puree
 	module Domain
 
 		class AggregateRoot < Entity
-			def initialize(id)
-				super(id)
-        @aggregate_root = self
-        @event_list = []
-			end
+      
+      def aggregate_root
+        self
+      end
 
       def replay_events(events)
         events.each do |event|
-          entity = find_entity(self, event.source_id, event.source_class_name)
+          entity = find_within(self, event.source_id_hash)
           if entity.nil?
-            attributes = "aggregate_root_id: #{event.aggregate_root_id}, id: #{event.source_id}, class_name: #{event.source_class_name}" 
-            raise "Failed to replay event - no entity found with #{attributes}"
+            raise "Failed to replay event - no entity found with id_hash #{event.source_id_hash}"
           end
 
           entity.send(:apply_event, event)
         end
       end
 
-      def find_entity(root, id, class_name)
+      def pending_events
+        event_stream.all
+      end 
+
+      private
+
+      def find_within(entity, id_hash)
         # TODO: Optimize search algorithm
-        if root.id == id and root.class.name == class_name
-          return root
+        if entity.id_hash == id_hash
+          return entity
         else
-          get_sub_entities(root).each do |sub_entity|
-            entity = find_entity(sub_entity, id, class_name)
+          get_sub_entities(entity).each do |sub_entity|
+            entity = find_within(sub_entity, id_hash)
             return entity unless entity.nil?
           end
         end
         nil
       end
 
-      def get_sub_entities(parent)
-        sub_entities = parent.instance_variable_get(:@entities).values
-        parent.instance_variable_get(:@entity_collections).values.each do |collection|
-          sub_entities.concat(collection.to_array)
+      def get_sub_entities(entity)
+        sub_entities = entity.send(:entities).values
+        entity.send(:entity_collections).values.each do |collection|
+          sub_entities.concat(collection.entries)
         end
         sub_entities
       end
+
+      def event_stream
+        @event_stream ||= EventStream.new(id_hash)
+      end
+
 		end
     
 	end

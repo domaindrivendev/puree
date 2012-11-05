@@ -17,13 +17,17 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      def signal_event(name, args={})
-        event = Puree::Domain::Event.new(nil, name, args)
-        aggregate_root = apply_event(event)
+      def initialize(aggregate_root_class)
+        @aggregate_root_class = aggregate_root_class
+      end
 
-        # Track the creation event
-        event_list = [ event ]
-        aggregate_root.instance_variable_set(:@event_list, event_list)
+      def signal_event(name, args={})
+        id = args[@aggregate_root_class.identifier_name]
+        id_hash = "#{@aggregate_root_class.name}#{id}"
+        event = Puree::Domain::Event.new(id_hash, name, args)
+        
+        aggregate_root = apply_event(event)
+        aggregate_root.send(:event_stream).add(event)
 
         aggregate_root
       end

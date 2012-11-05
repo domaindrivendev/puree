@@ -1,6 +1,7 @@
 require 'singleton'
 require 'puree/version'
 require 'puree/domain/event'
+require 'puree/domain/event_stream'
 require 'puree/domain/entity'
 require 'puree/domain/entity_collection'
 require 'puree/domain/aggregate_root'

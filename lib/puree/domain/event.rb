@@ -1,15 +1,15 @@
 module Puree
   module Domain
+    
     class Event
+      attr_reader :source_id_hash, :name, :args
 
-      attr_reader :root_id, :name, :args
-
-      def initialize(root_id, name, args={})
-        @root_id = root_id
+      def initialize(source_id_hash, name, args={})
+        @source_id_hash = source_id_hash
         @name = name
         @args = args
       end
-
     end
+
   end
 end
