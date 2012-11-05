@@ -8,6 +8,10 @@ module Puree
           apply_event_blocks[name] = block
         end
 
+        def identifiable_by(attr_name)
+          attr_reader(attr_name)
+        end
+
         def has_a(name)
           one_to_one_associations << name.to_s  
         end
@@ -33,27 +37,12 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      attr_reader :id
-
-      def initialize(id)
-        @id = id
-        @entities ||= {}
-        @entity_collections ||= {}
-
-        @aggregate_root = nil
-        # If part of aggregate, then parent must inject aggregate root reference
-      end
-
       def signal_event(name, args={})
-        if @aggregate_root.nil?
-          raise 'TODO: aggregate root not set'
-        end
-
-        event = Puree::Domain::Event.new(@aggregate_root.class.name, @aggregate_root.id, self.class.name, id, name, args)
+        event = Puree::Domain::Event.new(nil, name, args)
         apply_event(event)
 
-        event_list = @aggregate_root.instance_variable_get(:@event_list)
-        event_list << event
+        # event_list = @aggregate_root.instance_variable_get(:@event_list)
+        # event_list << event
       end
 
       def pending_events
@@ -64,6 +53,9 @@ module Puree
         method_name = method.to_s
         one_to_one_associations = self.class.one_to_one_associations
         one_to_many_associations = self.class.one_to_many_associations
+
+        @entities ||= {}
+        @entity_collections ||= {}
 
         # association accessors
         if one_to_one_associations.include?(method_name) and @entities.has_key?(method_name)
