@@ -6,10 +6,6 @@ module Puree
       module ClassMethods
         attr_reader :identifier_name
 
-        def apply_event(name, &block)
-          apply_event_blocks[name] = block
-        end
-
         def identifiable_by(name)
           @identifier_name = name
           attr_reader(name)
@@ -21,6 +17,10 @@ module Puree
 
         def has_many(name)
           one_to_many_associations << name.to_s  
+        end
+
+        def apply_event(name, &block)
+          apply_event_blocks[name] = block
         end
 
         def apply_event_blocks

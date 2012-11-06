@@ -3,13 +3,9 @@ module Puree
 
 		class AggregateRoot < Entity
       
-      def aggregate_root
-        self
-      end
-
       def replay_events(events)
         events.each do |event|
-          entity = find_within(self, event.source_id_hash)
+          entity = find_entity(self, event.source_id_hash)
           if entity.nil?
             raise "Failed to replay event - no entity found with id_hash #{event.source_id_hash}"
           end
@@ -24,14 +20,22 @@ module Puree
 
       private
 
-      def find_within(entity, id_hash)
+      def aggregate_root
+        self
+      end
+
+      def event_stream
+        @event_stream ||= EventStream.new(id_hash)
+      end
+
+      def find_entity(parent, id_hash)
         # TODO: Optimize search algorithm
-        if entity.id_hash == id_hash
-          return entity
+        if parent.id_hash == id_hash
+          return parent
         else
-          get_sub_entities(entity).each do |sub_entity|
-            entity = find_within(sub_entity, id_hash)
-            return entity unless entity.nil?
+          get_sub_entities(parent).each do |sub_entity|
+            parent = find_entity(sub_entity, id_hash)
+            return parent unless parent.nil?
           end
         end
         nil
@@ -43,10 +47,6 @@ module Puree
           sub_entities.concat(collection.entries)
         end
         sub_entities
-      end
-
-      def event_stream
-        @event_stream ||= EventStream.new(id_hash)
       end
 
 		end
