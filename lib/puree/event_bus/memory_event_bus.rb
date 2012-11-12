@@ -3,17 +3,17 @@ module Puree
 
 		class MemoryEventBus
 			def initialize
-				@subscribers = []
+				@observers = []
 			end
 
-			def register(subscriber)
-				@subscribers << subscriber
+			def register(observer)
+				@observers << observer
 			end
 
 			def publish(event)
-				@subscribers.each do |subscriber|
-					if subscriber.event_names.include?(event.name)
-						subscriber.notify(event)
+				@observers.each do |observer|
+					if observer.event_names.include?(event.name)
+						observer.notify(event)
 					end
 				end 
 			end

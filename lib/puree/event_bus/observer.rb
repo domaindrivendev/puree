@@ -1,7 +1,7 @@
 module Puree
   module EventBus
 
-    class Subscriber
+    class Observer
 
       module ClassMethods
         def on_event(name, &block)

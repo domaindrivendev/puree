@@ -8,27 +8,34 @@ module Puree
 				@event_bus = event_bus
 			end
 
-			def save(aggregate_root)
-				event_list = aggregate_root.instance_variable_get(:@event_list)
+			def add(aggregate_root)
+				@event_store.register_aggregate_root(aggregate_root.id_hash)
+				@event_store.add_events(aggregate_root.id_hash, aggregate_root.pending_events)
 
-				event_list.each do |event|
-					# TODO: Support for concurrency
-          @event_store.save(event)
-				end
+				publish_events(aggregate_root.pending_events)
+			end
 
-        event_list.each do |event|
-          @event_bus.publish(event)
-        end
-      end
+			def find(identifier)
+				class_name = @factory.class.aggregate_root_class.name
+				id_hash = "#{class_name}#{identifier}"
+				events = @event_store.get_events(id_hash)
 
-			def get_by_id(aggregate_root_id)
-				events = @event_store.get_aggregate_events(@factory.aggregate_root_class.name, aggregate_root_id)
-        
         aggregate_root = @factory.recreate(events.first)
         aggregate_root.replay_events(events.drop(1))
         aggregate_root
 			end
 
+			def update(aggregate_root)
+				@event_store.add_events(aggregate_root.id_hash, aggregate_root.pending_events)
+
+				publish_events(aggregate_root.pending_events)
+			end
+
+			private
+
+			def publish_events(events)
+				events.each { |event| @event_bus.publish(event) }
+			end
 		end
 	end
 end

@@ -16,4 +16,5 @@ Gem::Specification.new do |gem|
   gem.version       = Puree::VERSION
 
   gem.add_development_dependency('rspec')
+  gem.add_development_dependency('rspec-spies')
 end

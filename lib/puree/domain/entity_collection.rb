@@ -18,16 +18,8 @@ module Puree
 				entity.instance_variable_set(:@aggregate_root, @aggregate_root)
 			end
 
-			def find_by_id(entity_id)
-				return @entities.find { |entity| entity.id == entity_id }
-			end
-
 			def delete(entity)
 				@entities.delete(entity)
-			end
-
-			def to_array
-				@entities
 			end
 
 		end

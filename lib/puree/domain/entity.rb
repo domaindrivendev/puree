@@ -4,8 +4,11 @@ module Puree
     class Entity
 
       module ClassMethods
-        def apply_event(name, &block)
-          apply_event_blocks[name] = block
+        attr_reader :identifier_name
+
+        def identifiable_by(name)
+          @identifier_name = name
+          attr_reader(name)
         end
 
         def has_a(name)
@@ -14,6 +17,10 @@ module Puree
 
         def has_many(name)
           one_to_many_associations << name.to_s  
+        end
+
+        def apply_event(name, &block)
+          apply_event_blocks[name] = block
         end
 
         def apply_event_blocks
@@ -33,31 +40,19 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      attr_reader :id
+      def id_hash
+        if self.class.identifier_name
+          return "#{self.class.name}#{self.send(self.class.identifier_name)}"
+        end
 
-      def initialize(id)
-        @id = id
-        @entities ||= {}
-        @entity_collections ||= {}
-
-        @aggregate_root = nil
-        # If part of aggregate, then parent must inject aggregate root reference
+        self.class.name
       end
 
       def signal_event(name, args={})
-        if @aggregate_root.nil?
-          raise 'TODO: aggregate root not set'
-        end
-
-        event = Puree::Domain::Event.new(@aggregate_root.class.name, @aggregate_root.id, self.class.name, id, name, args)
+        event = Puree::Domain::Event.new(id_hash, name, args)
         apply_event(event)
 
-        event_list = @aggregate_root.instance_variable_get(:@event_list)
-        event_list << event
-      end
-
-      def pending_events
-        @event_list.clone
+        aggregate_root.send(:event_list) << event
       end
 
       def method_missing(method, *args, &block)
@@ -66,10 +61,10 @@ module Puree
         one_to_many_associations = self.class.one_to_many_associations
 
         # association accessors
-        if one_to_one_associations.include?(method_name) and @entities.has_key?(method_name)
-          return @entities[method_name]
+        if one_to_one_associations.include?(method_name) and entities.has_key?(method_name)
+          return entities[method_name]
         elsif one_to_many_associations.include?(method_name)
-          return @entity_collections[method_name] ||= EntityCollection.new(@aggregate_root)
+          return entity_collections[method_name] ||= EntityCollection.new(aggregate_root)
         end
 
         # one to one asssociation setters
@@ -77,8 +72,8 @@ module Puree
           association = method_name[4..-1]
           if one_to_one_associations.include?(association)
             entity = args[0]
-            entity.instance_variable_set(:@aggregate_root, @aggregate_root)
-            @entities[association] = entity
+            entity.instance_variable_set(:@aggregate_root, aggregate_root)
+            entities[association] = entity
             return entity
           end
         end
@@ -87,6 +82,18 @@ module Puree
       end
 
       private
+
+      def aggregate_root
+        @aggregate_root
+      end
+
+      def entities
+        @entities ||= {}
+      end
+
+      def entity_collections
+        @entity_collections ||= {}
+      end
 
       def apply_event(event)
         apply_event_blocks = self.class.apply_event_blocks
