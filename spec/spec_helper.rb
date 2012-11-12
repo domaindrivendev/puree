@@ -1,6 +1,8 @@
 require 'puree'
 
-Puree.config.event_store = Puree::Persistence::MemoryEventStore.new
-Puree.config.event_bus = Puree::EventBus::MemoryEventBus.new
+Puree.configure do |config|
+	config.event_store = Puree::Persistence::MemoryEventStore.new
+	config.event_bus = Puree::EventBus::MemoryEventBus.new
+end
 
 require 'rspec-spies'

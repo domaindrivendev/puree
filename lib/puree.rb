@@ -17,4 +17,8 @@ module Puree
 	def self.config
 		Configuration.instance
 	end
+
+	def self.configure
+		yield(config)
+	end
 end

@@ -37,6 +37,8 @@ describe 'A class with Commanding behavior' do
 		it 'should have access to a Repository for the Aggregate Root, discovered by convention' do
 			repository = controller.order_repository
 			repository.should be_an_instance_of(Puree::Persistence::EventStoreRepository)
+			repository.instance_variable_get(:@event_store).should be_an_instance_of(Puree::Persistence::MemoryEventStore)
+			repository.instance_variable_get(:@event_bus).should be_an_instance_of(Puree::EventBus::MemoryEventBus)
 		end
 	end
 
