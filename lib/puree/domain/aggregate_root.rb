@@ -15,8 +15,8 @@ module Puree
       end
 
       def pending_events
-        event_stream.all
-      end 
+        event_list.clone
+      end
 
       private
 
@@ -24,8 +24,8 @@ module Puree
         self
       end
 
-      def event_stream
-        @event_stream ||= EventStream.new(id_hash)
+      def event_list
+        @event_list ||= []
       end
 
       def find_entity(parent, id_hash)

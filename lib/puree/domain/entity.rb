@@ -41,17 +41,18 @@ module Puree
       end
 
       def id_hash
-        return self.class.name unless self.class.identifier_name
+        if self.class.identifier_name
+          return "#{self.class.name}#{self.send(self.class.identifier_name)}"
+        end
 
-        id = self.send(self.class.identifier_name)
-        "#{self.class.name}#{id}"
+        self.class.name
       end
 
       def signal_event(name, args={})
         event = Puree::Domain::Event.new(id_hash, name, args)
         apply_event(event)
 
-        aggregate_root.send(:event_stream).add(event)
+        aggregate_root.send(:event_list) << event
       end
 
       def method_missing(method, *args, &block)
