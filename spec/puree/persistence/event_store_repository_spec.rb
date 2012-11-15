@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'spec_fakes'
 
 describe 'An Event Store Repository' do
 	before(:each) do
+		load 'fake_aggregate.rb'
 		@factory = OrderFactory.new
 		@event_store = Puree::Persistence::MemoryEventStore.new()
 		@event_bus = stub('event_bus')
