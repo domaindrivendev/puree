@@ -33,7 +33,7 @@ describe 'An Aggregate Root Factory' do
 				order.header.instance_variable_get(:@title).should == 'my order'
 
 				order.pending_events.length.should == 1
-				order.pending_events[0].source_id_hash.should == 'OrderFactory'
+				order.pending_events[0].source_id_token.should == 'OrderFactory'
 				order.pending_events[0].name.should == :order_created
 				order.pending_events[0].args.should == { order_no: 123, name: 'my order' }
 			end

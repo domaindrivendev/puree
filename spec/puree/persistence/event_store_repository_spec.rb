@@ -19,16 +19,16 @@ describe 'An Event Store Repository' do
 			@repository.add(order)
 		end
 
-		it 'should persist all pending Events for the new Aggregate Root' do
-			persisted_events = @event_store.get_events('Order123')
+		it 'should persist all pending Events from the provided Aggregate Root' do
+			persisted_events = @event_store.get_aggregate_events('Order123')
 
 			persisted_events.length.should == 2
-			persisted_events[0].source_id_hash.should == 'OrderFactory'
+			persisted_events[0].source_id_token.should == 'OrderFactory'
 			persisted_events[0].name.should == :order_created
 			persisted_events[0].args.should == { order_no: 123, name: 'my order' }
-			persisted_events[1].source_id_hash.should == 'Order123'
+			persisted_events[1].source_id_token.should == 'Order123'
 			persisted_events[1].name.should == :item_added
-			persisted_events[1].args.should == { item_no: 1, product_name: 'product1', quantity: 2 }
+			persisted_events[1].args.should == { order_no: 123, item_no: 1, product_name: 'product1', quantity: 2 }
 		end
 
 		it 'should publish the pending Events to the Event Bus' do
@@ -44,8 +44,8 @@ describe 'An Event Store Repository' do
 				Puree::Domain::Event.new('OrderFactory', :order_created, { order_no: 123, name: 'my order' }),
 				Puree::Domain::Event.new('Order123', :item_added, { item_no: 1, product_name: 'product1', quantity: 2 })
 			]
-			@event_store.register_aggregate_root('Order123')
-			@event_store.add_events('Order123', events)
+			@event_store.register_aggregate('Order123')
+			@event_store.add_aggregate_events('Order123', events)
 		
 			@order = @repository.find(123)
 		end
@@ -63,27 +63,27 @@ describe 'An Event Store Repository' do
 				Puree::Domain::Event.new('OrderFactory', :order_created, { order_no: 123, name: 'my order' }),
 				Puree::Domain::Event.new('Order123', :item_added, { item_no: 1, product_name: 'product1', quantity: 2 })
 			]
-			@event_store.register_aggregate_root('Order123')
-			@event_store.add_events('Order123', events)
+			@event_store.register_aggregate('Order123')
+			@event_store.add_aggregate_events('Order123', events)
 		
 			order = @repository.find(123)
 			order.add_item('product2', 3)
 			@repository.update(order)
 		end
 
-		it 'should persist all pending Events for the provided Aggregate Root' do
-			persisted_events = @event_store.get_events('Order123')
+		it 'should persist all pending Events from the provided Aggregate Root' do
+			persisted_events = @event_store.get_aggregate_events('Order123')
 
 			persisted_events.length.should == 3
-			persisted_events[0].source_id_hash.should == 'OrderFactory'
+			persisted_events[0].source_id_token.should == 'OrderFactory'
 			persisted_events[0].name.should == :order_created
 			persisted_events[0].args.should == { order_no: 123, name: 'my order' }
-			persisted_events[1].source_id_hash.should == 'Order123'
+			persisted_events[1].source_id_token.should == 'Order123'
 			persisted_events[1].name.should == :item_added
 			persisted_events[1].args.should == { item_no: 1, product_name: 'product1', quantity: 2 }
-			persisted_events[2].source_id_hash.should == 'Order123'
+			persisted_events[2].source_id_token.should == 'Order123'
 			persisted_events[2].name.should == :item_added
-			persisted_events[2].args.should == { item_no: 2, product_name: 'product2', quantity: 3 }
+			persisted_events[2].args.should == { order_no: 123, item_no: 2, product_name: 'product2', quantity: 3 }
 		end
 
 		it 'should publish the pending Events to the Event Bus' do

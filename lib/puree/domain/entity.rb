@@ -2,7 +2,6 @@ module Puree
   module Domain
 
     class Entity
-
       module ClassMethods
         attr_reader :identifier_name
 
@@ -40,16 +39,15 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      def id_hash
+      def id_token
         if self.class.identifier_name
           return "#{self.class.name}#{self.send(self.class.identifier_name)}"
         end
-
         self.class.name
       end
 
       def signal_event(name, args={})
-        event = Puree::Domain::Event.new(id_hash, name, args)
+        event = Puree::Domain::Event.new(id_token, name, args)
         apply_event(event)
 
         aggregate_root.send(:event_list) << event
@@ -102,7 +100,7 @@ module Puree
         end
         instance_exec(event, &apply_event_blocks[event.name])
       end
-
     end
+
   end
 end

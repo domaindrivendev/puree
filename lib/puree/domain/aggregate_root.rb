@@ -5,9 +5,9 @@ module Puree
       
       def replay_events(events)
         events.each do |event|
-          entity = find_entity(self, event.source_id_hash)
+          entity = find_entity(self, event.source_id_token)
           if entity.nil?
-            raise "Failed to replay event - no entity found with id_hash #{event.source_id_hash}"
+            raise "Failed to replay event - no entity found with identity token #{event.source_id_token}"
           end
 
           entity.send(:apply_event, event)
@@ -28,13 +28,13 @@ module Puree
         @event_list ||= []
       end
 
-      def find_entity(parent, id_hash)
+      def find_entity(parent, id_token)
         # TODO: Optimize search algorithm
-        if parent.id_hash == id_hash
+        if parent.id_token == id_token
           return parent
         else
           get_sub_entities(parent).each do |sub_entity|
-            parent = find_entity(sub_entity, id_hash)
+            parent = find_entity(sub_entity, id_token)
             return parent unless parent.nil?
           end
         end

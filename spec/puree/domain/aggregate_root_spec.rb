@@ -101,19 +101,19 @@ describe 'An Aggregate Root and associated Entities' do
 
 			it 'should track all Events that occur within the Aggregate' do
 				order.pending_events.length.should == 5
-				order.pending_events[0].source_id_hash.should == 'Order123'
+				order.pending_events[0].source_id_token.should == 'Order123'
 				order.pending_events[0].name.should == :item_added
 				order.pending_events[0].args.should == { item_no: 1, product_name: 'product1', quantity: 2 }
-				order.pending_events[1].source_id_hash.should == 'Order123'
+				order.pending_events[1].source_id_token.should == 'Order123'
 				order.pending_events[1].name.should == :item_added
 				order.pending_events[1].args.should == { item_no: 2, product_name: 'product2', quantity: 3 }
-				order.pending_events[2].source_id_hash.should == 'Header' 
+				order.pending_events[2].source_id_token.should == 'Header' 
 				order.pending_events[2].name.should == :title_changed
 				order.pending_events[2].args.should == { old_title: 'my order', new_title: 'my awesome order' }
-				order.pending_events[3].source_id_hash.should == 'Item1'
+				order.pending_events[3].source_id_token.should == 'Item1'
 				order.pending_events[3].name.should == :quantity_changed
 				order.pending_events[3].args.should == { item_no: 1, old_quantity: 2, new_quantity: 4 }
-				order.pending_events[4].source_id_hash.should == 'Item2'
+				order.pending_events[4].source_id_token.should == 'Item2'
 				order.pending_events[4].name.should == :quantity_changed
 				order.pending_events[4].args.should == { item_no: 2, old_quantity: 3, new_quantity: 5 }
 			end
