@@ -17,6 +17,16 @@ describe 'An Aggregate Root Factory' do
 
 	context 'that implements factory methods by signalling and applying Events' do
 		let(:factory) do
+			class Order < Puree::Domain::AggregateRoot
+				identifiable_by :order_no
+				attr_reader :order_no, :name
+
+				def initialize(order_no, name)
+					@order_no = order_no
+					@name = name
+				end
+			end
+
 			class OrderFactory < Puree::Domain::AggregateRootFactory
 				for_aggregate_root Order
 

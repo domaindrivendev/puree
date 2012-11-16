@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'fake_aggregate'
 
 describe 'A class with Commanding behavior' do
 	before(:each) do
@@ -9,19 +10,6 @@ describe 'A class with Commanding behavior' do
 
 	context 'that specifies a target Aggregate' do
 		let(:controller) do
-			
-			# Use fake classes namespaced according to the Puree convention
-			module Domain
-				module Orders
-					class Order < Puree::Domain::AggregateRoot
-					end
-
-					class OrderFactory < Puree::Domain::AggregateRootFactory
-						for_aggregate_root Order
-					end
-				end
-			end
-
 			class OrderController
 				for_aggregate :order
 			end
@@ -43,10 +31,6 @@ describe 'A class with Commanding behavior' do
 	end
 
 	after(:all) do
-		Domain::Orders.send(:remove_const, 'Order')
-		Domain::Orders.send(:remove_const, 'OrderFactory')
-		Domain.send(:remove_const, 'Orders')
-		Object.send(:remove_const, 'Domain')
 		Object.send(:remove_const, 'OrderController')
 	end
 end

@@ -1,9 +1,17 @@
 require 'spec_helper'
+<<<<<<< HEAD
+
+describe 'An Event Store Repository' do
+	before(:each) do
+		load 'fake_aggregate.rb'
+		@factory = OrderFactory.new
+=======
 require 'fake_aggregate'
 
 describe 'An Event Store Repository' do
 	before(:each) do
-		@factory = Domain::Orders::OrderFactory.new()
+		@factory = Domain::Orders::OrderFactory.new
+>>>>>>> Fix inline vs pre-canned fakes issue in specs
 		@event_store = Puree::Persistence::MemoryEventStore.new()
 		@event_bus = stub('event_bus')
 		@event_bus.stub(:publish)
