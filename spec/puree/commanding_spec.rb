@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'fake_aggregate'
+require 'sample/domain/orders'
 
 describe 'A class with Commanding behavior' do
 	before(:each) do

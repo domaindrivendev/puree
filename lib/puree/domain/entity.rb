@@ -5,7 +5,7 @@ module Puree
       module ClassMethods
         attr_reader :identifier_name
 
-        def identifiable_by(name)
+        def attr_identifier(name)
           @identifier_name = name
           attr_reader(name)
         end
@@ -39,15 +39,22 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      def id_token
+      def identity_token
         if self.class.identifier_name
-          return "#{self.class.name}#{self.send(self.class.identifier_name)}"
+          return "#{self.class.name}_#{self.send(self.class.identifier_name)}"
         end
         self.class.name
       end
 
       def signal_event(name, args={})
-        event = Puree::Domain::Event.new(id_token, name, args)
+        # Ensure aggregate root and entity identifiers are always published with event args
+        identifier_name = aggregate_root.class.identifier_name
+        args[identifier_name] = aggregate_root.send(identifier_name) unless identifier_name.nil?
+
+        identifier_name = self.class.identifier_name
+        args[identifier_name] = self.send(identifier_name) unless identifier_name.nil?
+
+        event = Puree::Domain::Event.new(identity_token, name, args)
         apply_event(event)
 
         aggregate_root.send(:event_list) << event

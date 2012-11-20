@@ -7,25 +7,25 @@ module Puree
 				@events = {}
 			end
 
-			def register_aggregate(id_token)
-				if @events.has_key?(id_token)
-					raise 'TODO: Provided id_token must be unique'
+			def register_aggregate(identity_token)
+				if @events.has_key?(identity_token)
+					raise 'TODO: Provided identity_token must be unique'
 				end
-				@events[id_token] = []
+				@events[identity_token] = []
 			end
 
-			def add_aggregate_events(id_token, event_list)
-				unless @events.has_key?(id_token)
-					raise "Aggregate with identity token #{id_token} does not exist"
+			def add_aggregate_events(identity_token, event_list)
+				unless @events.has_key?(identity_token)
+					raise "Aggregate with identity token #{identity_token} does not exist"
 				end
-				@events[id_token].concat(event_list)
+				@events[identity_token].concat(event_list)
 			end
 
-			def get_aggregate_events(id_token)
-				unless @events.has_key?(id_token)
-					raise "Aggregate with identity token #{id_token} does not exist"
+			def get_aggregate_events(identity_token)
+				unless @events.has_key?(identity_token)
+					raise "Aggregate with identity token #{identity_token} does not exist"
 				end
-				@events[id_token]		
+				@events[identity_token]		
 			end
 
 			def reset

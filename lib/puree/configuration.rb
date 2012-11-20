@@ -5,7 +5,14 @@ module Puree
 	class Configuration
 		include Singleton
 
-		attr_writer :event_store, :event_bus
+		attr_writer :event_store, :event_bus, :id_generator
+
+		def id_generator
+      if @id_generator.nil?
+        raise 'Puree::Rails.config.id_generator has not been configured'
+      end
+      @id_generator
+		end
 
 		def event_store
       if @event_store.nil?

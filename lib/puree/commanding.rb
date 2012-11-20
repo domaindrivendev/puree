@@ -41,7 +41,8 @@ module Puree
 
 			@factories ||= {}
 			if @factories[aggregate_name].nil? and factory_classes.has_key?(aggregate_name)
-				@factories[aggregate_name] = factory_classes[aggregate_name].new
+				id_generator = Puree.config.id_generator
+				@factories[aggregate_name] = factory_classes[aggregate_name].new(id_generator)
 			end
 			@factories[aggregate_name]
 		end
