@@ -18,8 +18,8 @@ module Domain
 				@quantity * @price
 			end
 
-			apply_event :quantity_changed do |event|
-				@quantity = event.args[:new_quantity]
+			apply_event :quantity_changed do |args|
+				@quantity = args[:new_quantity]
 			end
 		end
 

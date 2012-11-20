@@ -25,8 +25,8 @@ describe 'An Aggregate Root Factory' do
 					signal_event :order_created, order_no: next_order_no, name: name
 				end
 
-				apply_event :order_created do |event|
-					Order.new(event.args[:order_no], event.args[:name])
+				apply_event :order_created do |args|
+					Order.new(args[:order_no], args[:name])
 				end
 			end
 

@@ -64,11 +64,8 @@ describe 'An Aggregate Root and associated Entities' do
 					summary.calculate_total(gross_total, tax_rate)
 				end
 
-				apply_event :item_added do |event|
-					line_items << LineItem.new(
-						event.args[:product_code],
-						event.args[:price],
-						event.args[:quantity])
+				apply_event :item_added do |args|
+					line_items << LineItem.new(args[:product_code], args[:price], args[:quantity])
 				end
 			end
 
@@ -81,8 +78,8 @@ describe 'An Aggregate Root and associated Entities' do
 					@quantity * @price
 				end
 
-				apply_event :quantity_changed do |event|
-					@quantity = event.args[:new_quantity]
+				apply_event :quantity_changed do |args|
+					@quantity = args[:new_quantity]
 				end
 			end
 
@@ -98,8 +95,8 @@ describe 'An Aggregate Root and associated Entities' do
 						net_total: net_total
 				end
 
-				apply_event :total_calculated do |event|
-					@net_total = event.args[:net_total]
+				apply_event :total_calculated do |args|
+					@net_total = args[:net_total]
 				end
 			end
 

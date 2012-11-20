@@ -9,7 +9,7 @@ module Puree
 
 			def register_aggregate(identity_token)
 				if @events.has_key?(identity_token)
-					raise 'TODO: Provided identity_token must be unique'
+					raise 'Provided identity_token must be unique'
 				end
 				@events[identity_token] = []
 			end

@@ -105,7 +105,7 @@ module Puree
         if apply_event_blocks[event.name].nil?
           raise "Failed to apply event - no apply_event block found for #{event.name}"
         end
-        instance_exec(event, &apply_event_blocks[event.name])
+        instance_exec(event.args, &apply_event_blocks[event.name])
       end
     end
 

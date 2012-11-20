@@ -6,16 +6,16 @@ describe 'A Memory Event Bus' do
 	context 'with Observers registered' do
 		before(:each) do
 			class TestObserver < Puree::EventBus::Observer
-				def events_received
-					@events_received ||= []
+				def notifications
+					@notifications ||= []
 				end
 
-				on_event :order_created do |event|
-					events_received << event
+				on_event :order_created do |args|
+					notifications << args
 				end
 
-				on_event :item_added do |event|
-					events_received << event
+				on_event :item_added do |args|
+					notifications << args
 				end
 			end
 
@@ -28,19 +28,21 @@ describe 'A Memory Event Bus' do
 
 		context 'when Events are published' do
 			before(:each) do
-				@event1 = Puree::Domain::Event.new('OrderFactory', :order_created, { order_no: 123, name: 'my order' })
-				@event2 = Puree::Domain::Event.new('Order123', :item_added, { item_no: 1, product_name: 'product1', quantity: 2 })
+				@event1 = Puree::Domain::Event.new('OrderFactory', :order_created,
+					{ order_no: 123, name: 'my order' })
+				@event2 = Puree::Domain::Event.new('Order_123', :item_added,
+					{ order_no: 123, product_code: 'product1', price: 10.0, quantity: 2 })
 				event_bus.publish(@event1)
 				event_bus.publish(@event2)
 			end
 
 			it 'should notify all of the Observers' do
-				@observer1.events_received.length.should == 2
-				@observer1.events_received[0].should == @event1
-				@observer1.events_received[1].should == @event2
-				@observer2.events_received.length.should == 2
-				@observer2.events_received[0].should == @event1
-				@observer2.events_received[1].should == @event2
+				@observer1.notifications.length.should == 2
+				@observer1.notifications[0].should == @event1.args
+				@observer1.notifications[1].should == @event2.args
+				@observer2.notifications.length.should == 2
+				@observer2.notifications[0].should == @event1.args
+				@observer2.notifications[1].should == @event2.args
 			end
 		end
 	end

@@ -20,8 +20,11 @@ module Domain
 					net_total: net_total
 			end
 
-			apply_event :total_calculated do |event|
-				@net_total = event.args[:net_total]
+			apply_event :total_calculated do |args|
+				@gross_total = args[:gross_total]
+				@tax_rate = args[:tax_rate]
+				@tax_amount = args[:tax_amount]
+				@net_total = args[:net_total]
 			end
 		end
 

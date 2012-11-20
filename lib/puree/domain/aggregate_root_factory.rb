@@ -62,7 +62,7 @@ module Puree
           raise "Failed to apply event - no apply_event block found for #{event.name}"
         end
 
-        aggregate_root = instance_exec(event, &apply_event_blocks[event.name])
+        aggregate_root = instance_exec(event.args, &apply_event_blocks[event.name])
 
         aggregate_root
       end

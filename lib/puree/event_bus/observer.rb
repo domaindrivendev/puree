@@ -30,7 +30,7 @@ module Puree
         if on_event_blocks[event.name].nil?
           raise "Failed to handle event - no on_event block found for #{event.name}"
         end
-        instance_exec(event, &on_event_blocks[event.name])
+        instance_exec(event.args, &on_event_blocks[event.name])
       end
 
     end
