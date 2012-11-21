@@ -9,18 +9,18 @@ module Domain
 				@net_total = 0.0
 			end
 
-			def calculate_total(gross_total, tax_rate)
+			def calculate_totals(gross_total, tax_rate)
 				tax_amount = gross_total * tax_rate
 				net_total = gross_total + tax_amount
 
-				signal_event :total_calculated,
+				signal_event :totals_calculated,
 					gross_total: gross_total,
 					tax_rate: tax_rate,
 					tax_amount: tax_amount,
 					net_total: net_total
 			end
 
-			apply_event :total_calculated do |args|
+			apply_event :totals_calculated do |args|
 				@gross_total = args[:gross_total]
 				@tax_rate = args[:tax_rate]
 				@tax_amount = args[:tax_amount]

@@ -1,7 +1,7 @@
 module Domain
 	module Orders
 
-		class LineItem < Puree::Domain::Entity
+		class Line < Puree::Domain::Entity
 			attr_identifier :product_code
 
 			def initialize(product_code, price, quantity)
