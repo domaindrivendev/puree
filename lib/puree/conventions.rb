@@ -1,21 +1,30 @@
 module Puree
 	
 	module Conventions
-		def self.resolve_factory_class(aggregate_name)
-			class_name = classify(aggregate_name.to_s)
-			module_name = pluralize(class_name)
+		
+		def aggregate_nickname(aggregate_root_class)
+			underscore(class_short_name(aggregate_root_class))
+		end
 
-			::Domain.const_get(module_name).const_get(class_name + 'Factory')
+		def aggregate_root_factory_class(aggregate_root_class)
+			module_names = aggregate_root_class.name.split('::')
+			module_names.pop
+			
+			enclosing_module = Object
+			module_names.each { |mn| enclosing_module = enclosing_module.const_get(mn) } 
+
+			factory_class_name = "#{class_short_name(aggregate_root_class)}Factory"
+			enclosing_module.const_get(factory_class_name)
 		end
 
 		private
 
-		def self.classify(term)
-			term.split('_').map { |w| w.capitalize }.join
+		def class_short_name(klass)
+			klass.name.split('::').last
 		end
 
-		def self.pluralize(term)
-			term.end_with?('s') ? term : term + 's'
+		def underscore(word)
+	    word.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').downcase
 		end
 	end
 

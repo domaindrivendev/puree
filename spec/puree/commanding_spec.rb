@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'sample/domain/orders'
+require 'sample/models/sales'
 
 describe 'A class with Commanding behavior' do
 	before(:each) do
@@ -11,7 +11,7 @@ describe 'A class with Commanding behavior' do
 	context 'that specifies a target Aggregate' do
 		let(:controller) do
 			class OrderController
-				for_aggregate :order
+				orchestrates Sales::Order
 			end
 
 			OrderController.new
@@ -19,7 +19,7 @@ describe 'A class with Commanding behavior' do
 
 		it 'should have access to a Factory for the Aggregate Root, discovered by convention' do
 			factory = controller.order_factory
-			factory.should be_an_instance_of(Domain::Orders::OrderFactory)
+			factory.should be_an_instance_of(Sales::OrderFactory)
 		end
 
 		it 'should have access to a Repository for the Aggregate Root, discovered by convention' do

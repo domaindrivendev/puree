@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'sample/models/sales'
 
 describe 'An Aggregate Root Factory' do
 	before(:all) do
@@ -19,7 +20,7 @@ describe 'An Aggregate Root Factory' do
 			end
 
 			class OrderFactory < Puree::Domain::AggregateRootFactory
-				for_aggregate_root Order
+				creates Order
 
 				def create(name)
 					signal_event :order_created, order_no: next_order_no, name: name

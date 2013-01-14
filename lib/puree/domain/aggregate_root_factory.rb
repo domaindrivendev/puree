@@ -6,7 +6,7 @@ module Puree
 			module ClassMethods
         attr_reader :aggregate_root_class
 
-        def for_aggregate_root(klass)
+        def creates(klass)
           @aggregate_root_class = klass
         end
 

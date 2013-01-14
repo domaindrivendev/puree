@@ -2,11 +2,12 @@ module Puree
 
 	module Commanding
 		module ClassMethods
+			include Puree::Conventions
 			attr_reader :factory_classes
 
-			def for_aggregate(name)
+			def orchestrates(aggregate_root_class)
 				@factory_classes ||= {}
-				@factory_classes[name] = Puree::Conventions.resolve_factory_class(name)
+				@factory_classes[aggregate_nickname(aggregate_root_class)] = aggregate_root_factory_class(aggregate_root_class)
 			end
 		end
 
@@ -19,32 +20,32 @@ module Puree
 
 			# factory accessors
 			if method_name.end_with?('_factory')
-				aggregate_name = method_name[0..-9]
-				factory = get_factory(aggregate_name.to_sym)
+				aggregate_nickname = method_name[0..-9]
+				factory = get_factory(aggregate_nickname)
 				return factory unless factory.nil?
 			end
 
 			# repository accessors
 			if method_name.end_with?('_repository')
-				aggregate_name = method_name[0..-12]
-				factory = get_factory(aggregate_name.to_sym)
+				aggregate_nickname = method_name[0..-12]
+				factory = get_factory(aggregate_nickname)
 				unless factory.nil?
-					return get_repository(aggregate_name.to_sym, factory)
+					return get_repository(aggregate_nickname, factory)
 				end
 			end
 
 			super.method_missing(method, *args, &block)
 		end
 
-		def get_factory(aggregate_name)
+		def get_factory(aggregate_nickname)
 			factory_classes = self.class.factory_classes
 
 			@factories ||= {}
-			if @factories[aggregate_name].nil? and factory_classes.has_key?(aggregate_name)
+			if @factories[aggregate_nickname].nil? and factory_classes.has_key?(aggregate_nickname)
 				id_generator = Puree.config.id_generator
-				@factories[aggregate_name] = factory_classes[aggregate_name].new(id_generator)
+				@factories[aggregate_nickname] = factory_classes[aggregate_nickname].new(id_generator)
 			end
-			@factories[aggregate_name]
+			@factories[aggregate_nickname]
 		end
 
 		def get_repository(aggregate_name, factory)
