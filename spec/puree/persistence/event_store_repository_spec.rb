@@ -5,10 +5,10 @@ describe 'An Event Store Repository' do
 	before(:each) do
 		@factory = Sales::OrderFactory.new(Puree::Persistence::MemoryIdGenerator.new)
 		@event_store = Puree::Persistence::MemoryEventStore.new()
-		@event_bus = stub('event_bus')
-		@event_bus.stub(:publish)
+		@message_bus = stub('message_bus')
+		@message_bus.stub(:publish_event)
 
-		@repository = Puree::Persistence::EventStoreRepository.new(@factory, @event_store, @event_bus)
+		@repository = Puree::Persistence::EventStoreRepository.new(@factory, @event_store, @message_bus)
 	end
 
 	context 'when the add method is called' do
@@ -33,7 +33,7 @@ describe 'An Event Store Repository' do
 				{ order_no: 1, product_code: 'product1', price: 10.0, quantity: 2 }
 		end
 
-		it 'should publish the pending Events to the Event Bus' do
+		it 'should publish the pending Events to the Message Bus' do
 			# TODO:
 			# event1 = Puree::Domain::Event.new('OrderFactory', :order_created, { order_no: 123, name: 'my order'})
 			# @event_bus.should have_received(:publish).with(event1)
@@ -95,7 +95,7 @@ describe 'An Event Store Repository' do
 				{ order_no: 1, product_code: 'product2', price: 15.0, quantity: 3 }
 		end
 
-		it 'should publish the pending Events to the Event Bus' do
+		it 'should publish the pending Events to the Message Bus' do
 			# TODO:
 		end	
 	end

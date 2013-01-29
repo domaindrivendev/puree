@@ -1,9 +1,9 @@
 require 'puree'
 
 Puree.configure do |config|
-	config.id_generator = Puree::Persistence::MemoryIdGenerator.new
+	config.message_bus = Puree::Messaging::SyncMessageBus.new
 	config.event_store = Puree::Persistence::MemoryEventStore.new
-	config.event_bus = Puree::EventBus::MemoryEventBus.new
+	config.id_generator = Puree::Persistence::MemoryIdGenerator.new
 end
 
 require 'rspec-spies'

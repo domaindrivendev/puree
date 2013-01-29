@@ -52,8 +52,8 @@ module Puree
 			@repositories ||= {}
 			if @repositories[aggregate_name].nil?
 				event_store = Puree.config.event_store
-				event_bus = Puree.config.event_bus
-				@repositories[aggregate_name] = Puree::Persistence::EventStoreRepository.new(factory, event_store, event_bus)
+				message_bus = Puree.config.message_bus
+				@repositories[aggregate_name] = Puree::Persistence::EventStoreRepository.new(factory, event_store, message_bus)
 			end
 			@repositories[aggregate_name]
 		end

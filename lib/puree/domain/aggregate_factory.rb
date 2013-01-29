@@ -1,7 +1,7 @@
 module Puree
 	module Domain
 
-		class AggregateRootFactory
+		class AggregateFactory
 
 			module ClassMethods
         attr_reader :aggregate_root_class

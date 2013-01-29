@@ -1,6 +1,6 @@
 module Sales
 		
-	class OrderFactory < Puree::Domain::AggregateRootFactory
+	class OrderFactory < Puree::Domain::AggregateFactory
 		creates Order
 			
 		def create(name)

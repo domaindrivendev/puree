@@ -26,7 +26,7 @@ describe 'A class with Commanding behavior' do
 			repository = controller.order_repository
 			repository.should be_an_instance_of(Puree::Persistence::EventStoreRepository)
 			repository.instance_variable_get(:@event_store).should be_an_instance_of(Puree::Persistence::MemoryEventStore)
-			repository.instance_variable_get(:@event_bus).should be_an_instance_of(Puree::EventBus::MemoryEventBus)
+			repository.instance_variable_get(:@message_bus).should be_an_instance_of(Puree::Messaging::SyncMessageBus)
 		end
 	end
 

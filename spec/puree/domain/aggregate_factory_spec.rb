@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'sample/models/sales'
 
-describe 'An Aggregate Root Factory' do
+describe 'An Aggregate Factory' do
 	before(:all) do
-		class OrderFactory < Puree::Domain::AggregateRootFactory
+		class OrderFactory < Puree::Domain::AggregateFactory
 		end
 	end
 
@@ -19,7 +19,7 @@ describe 'An Aggregate Root Factory' do
 				end
 			end
 
-			class OrderFactory < Puree::Domain::AggregateRootFactory
+			class OrderFactory < Puree::Domain::AggregateFactory
 				creates Order
 
 				def create(name)

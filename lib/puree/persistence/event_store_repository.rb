@@ -2,10 +2,10 @@ module Puree
 	module Persistence
 		class EventStoreRepository
 
-			def initialize(aggregate_root_factory, event_store, event_bus)
+			def initialize(aggregate_root_factory, event_store, message_bus)
 				@factory = aggregate_root_factory
 				@event_store = event_store
-				@event_bus = event_bus
+				@message_bus = message_bus
 			end
 
 			def add(aggregate_root)
@@ -35,7 +35,7 @@ module Puree
 
 			def publish_events(aggregate_root)
 				aggregate_root.pending_events.each do |event|
-					@event_bus.publish(event)
+					@message_bus.publish_event(event.name, event.args)
 				end
 			end
 		end
