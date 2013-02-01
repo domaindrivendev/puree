@@ -20,10 +20,8 @@ describe 'An Aggregate Factory' do
 			end
 
 			class OrderFactory < Puree::Domain::AggregateFactory
-				creates Order
-
 				def create(name)
-					signal_event :order_created, order_no: next_order_no, name: name
+					signal_event :order_created, order_no: 1, name: name
 				end
 
 				apply_event :order_created do |args|
@@ -31,7 +29,7 @@ describe 'An Aggregate Factory' do
 				end
 			end
 
-			OrderFactory.new(Puree::Persistence::MemoryIdGenerator.new)
+			OrderFactory.new
 		end
 
 		context 'when a factory method is called' do
@@ -66,6 +64,5 @@ describe 'An Aggregate Factory' do
 	after(:all) do
 		Object.send(:remove_const, :Order)
 		Object.send(:remove_const, :OrderFactory)
-		Puree.config.id_generator.reset
 	end
 end

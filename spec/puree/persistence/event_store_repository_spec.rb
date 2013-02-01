@@ -3,7 +3,7 @@ require 'sample/models/sales'
 
 describe 'An Event Store Repository' do
 	before(:each) do
-		@factory = Sales::OrderFactory.new(Puree::Persistence::MemoryIdGenerator.new)
+		@factory = Sales::OrderFactory.new
 		@event_store = Puree::Persistence::MemoryEventStore.new()
 		@message_bus = stub('message_bus')
 		@message_bus.stub(:publish_event)
@@ -13,7 +13,7 @@ describe 'An Event Store Repository' do
 
 	context 'when the add method is called' do
 		before(:each) do
-			order = @factory.create('my order')
+			order = @factory.create(1, 'my order')
 			order.add_line('product1', 10.0, 2)
 		
 			@repository.add(order)

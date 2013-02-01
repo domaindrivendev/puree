@@ -34,7 +34,7 @@ describe 'An Aggregate Root and associated Entities' do
 		end
 	end
 
-	context 'that implements state changes by signalling and applying Events' do
+	context 'that implement state changes by signalling and applying Events' do
 		let(:order) do
 			class Order < Puree::Domain::AggregateRoot
 

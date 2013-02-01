@@ -2,24 +2,24 @@ module Puree
 	
 	module Conventions
 		
-		def aggregate_nickname(aggregate_root_class)
-			underscore(class_short_name(aggregate_root_class))
+		def get_aggregate_name(root_class)
+			underscore(short_name(root_class))
 		end
 
-		def aggregate_root_factory_class(aggregate_root_class)
-			module_names = aggregate_root_class.name.split('::')
+		def get_factory_class(root_class)
+			module_names = root_class.name.split('::')
 			module_names.pop
 			
 			enclosing_module = Object
 			module_names.each { |mn| enclosing_module = enclosing_module.const_get(mn) } 
 
-			factory_class_name = "#{class_short_name(aggregate_root_class)}Factory"
-			enclosing_module.const_get(factory_class_name)
+			factory_short_name = "#{short_name(root_class)}Factory"
+			enclosing_module.const_get(factory_short_name)
 		end
 
 		private
 
-		def class_short_name(klass)
+		def short_name(klass)
 			klass.name.split('::').last
 		end
 

@@ -2,8 +2,8 @@ module Puree
 	module Persistence
 		class EventStoreRepository
 
-			def initialize(aggregate_root_factory, event_store, message_bus)
-				@factory = aggregate_root_factory
+			def initialize(aggregate_factory, event_store, message_bus)
+				@factory = aggregate_factory
 				@event_store = event_store
 				@message_bus = message_bus
 			end
@@ -16,7 +16,8 @@ module Puree
 			end
 
 			def find(identifier)
-				class_name = @factory.class.aggregate_root_class.name
+				class_name = @factory.class.name[0...-7]
+
 				identity_token = "#{class_name}_#{identifier}"
 				events = @event_store.get_aggregate_events(identity_token)
 

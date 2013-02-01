@@ -1,10 +1,9 @@
 module Sales
 		
 	class OrderFactory < Puree::Domain::AggregateFactory
-		creates Order
 			
-		def create(name)
-			signal_event :order_created, order_no: next_order_no, name: name
+		def create(order_no, name)
+			signal_event :order_created, order_no: order_no, name: name
 		end
 
 		apply_event :order_created do |args|

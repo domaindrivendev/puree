@@ -4,12 +4,6 @@ module Puree
 		class AggregateFactory
 
 			module ClassMethods
-        attr_reader :aggregate_root_class
-
-        def creates(klass)
-          @aggregate_root_class = klass
-        end
-
         def apply_event(name, &block)
           apply_event_blocks[name] = block
         end
@@ -23,10 +17,6 @@ module Puree
         klass.extend(ClassMethods)
       end
 
-      def initialize(id_generator)
-        @id_generator = id_generator
-      end
-
       def signal_event(name, args={})
         event = Puree::Domain::Event.new(self.class.name, name, args)
         
@@ -38,20 +28,6 @@ module Puree
 
       def recreate(creation_event)
         apply_event(creation_event)
-      end
-
-      def method_missing(method, *args, &block)
-        method_name = method.to_s
-
-        # generate unique identifier
-        identifier_name = self.class.aggregate_root_class.identifier_name
-        unless identifier_name.nil?
-          if method_name == "next_#{identifier_name}"
-            return @id_generator.next(self.class.aggregate_root_class.name)
-          end
-        end
-
-        super.method_missing(method, *args, &block)
       end
       
       private
