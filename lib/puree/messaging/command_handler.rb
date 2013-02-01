@@ -2,6 +2,7 @@ module Puree
   module Messaging
 
     class CommandHandler
+      include ::Puree::DomainFacade
 
       module ClassMethods
         attr_reader :command_blocks
