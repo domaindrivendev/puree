@@ -18,7 +18,7 @@ module Puree
       end
 
       def has_block_for?(name)
-        self.class.event_blocks.has_key?(name)
+        self.class.event_blocks && self.class.event_blocks.has_key?(name)
       end
 
       def notify(name, args)

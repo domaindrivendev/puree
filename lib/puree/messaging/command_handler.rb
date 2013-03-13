@@ -18,7 +18,7 @@ module Puree
       end
 
       def has_block_for?(name)
-        self.class.command_blocks.has_key?(name)
+        self.class.command_blocks && self.class.command_blocks.has_key?(name)
       end
 
       def execute(name, args)

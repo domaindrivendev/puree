@@ -23,8 +23,8 @@ module Puree
 			klass.name.split('::').last
 		end
 
-		def underscore(word)
-	    word.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').downcase
+		def underscore(camel_cased_word)
+	    camel_cased_word.gsub(/(.)([A-Z])/,'\1_\2').downcase
 		end
 	end
 
