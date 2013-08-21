@@ -1,7 +1,10 @@
+require 'singleton'
+
 module Puree
   module Messaging
 
     class InMemoryBus
+      include Singleton
 
       def initialize
         @subscribers = []

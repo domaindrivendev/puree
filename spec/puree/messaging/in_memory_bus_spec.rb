@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'An InMemoryBus' do
-  let(:bus) { Puree::Messaging::InMemoryBus.new }
+  let(:bus) { Puree::Messaging::InMemoryBus.instance }
 
   context 'with registered subscribers' do
     before(:each) do
