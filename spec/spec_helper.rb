@@ -1,9 +1,11 @@
 require 'puree'
-
-Puree.configure do |config|
-	config.id_generator = Puree::Persistence::MemoryIdGenerator.new
-	config.event_store = Puree::Persistence::MemoryEventStore.new
-	config.event_bus = Puree::EventBus::MemoryEventBus.new
-end
-
 require 'rspec-spies'
+
+require 'dummy'
+require 'fake_event_store'
+
+# Test constants
+ScheduleDate = Time.now + (60 * 60 * 24 * 31)
+ConferenceCreated = Puree::Event.new(:conference_created, id: 123, name: 'Test Conf', description: 'A test conf')
+ConferenceScheduled = Puree::Event.new(:conference_scheduled, id: 123, date: ScheduleDate)
+CalledForProposals = Puree::Event.new(:called_for_proposals, id: 123)

@@ -1,7 +1,7 @@
 module Puree
-  module EventBus
+  module Messaging
 
-    class Observer
+    class Subscriber
 
       module ClassMethods
         def on_event(name, &block)
@@ -20,19 +20,15 @@ module Puree
       def self.inherited(klass)
         klass.extend(ClassMethods)
       end
-
-      def event_names
-        self.class.event_names
+    
+      def subscribes_to?(event_name)
+        self.class.event_names.include?(event_name)
       end
 
       def notify(event)
         on_event_blocks = self.class.on_event_blocks
-        if on_event_blocks[event.name].nil?
-          raise "Failed to handle event - no on_event block found for #{event.name}"
-        end
         instance_exec(event.args, &on_event_blocks[event.name])
       end
-
     end
 
   end
