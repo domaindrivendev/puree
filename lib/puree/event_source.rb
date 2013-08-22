@@ -16,7 +16,7 @@ module Puree
     def self.inherited(klass)
       klass.extend(ClassMethods)
     end
-      
+
     def signal_event(name, args={})
       event = Event.new(name, args)
       apply(event)

@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe 'A Repository' do
   let(:event_store) { FakeEventStore.new }
-  let(:event_bus) do
-    event_bus = stub('event_bus')
-    event_bus
-  end
+  let(:event_bus) { FakeEventBus.new }
   let(:repository) do
     Puree::Repository.for(Conference,
       lambda { |conference| conference.id },
@@ -22,7 +19,7 @@ describe 'A Repository' do
     end
 
     it 'should persist tracked events to the event store' do
-      stream = event_store.get('Conference_123')
+      stream = event_store.get_stream('Conference_123')
       stream.count.should == 2
 
       event = stream.first
@@ -33,15 +30,19 @@ describe 'A Repository' do
       event.name.should == :conference_scheduled
       event.args.should == { id: 123, date: ScheduleDate }
     end
+
+    it 'should publish tracked events to the event bus ' do
+      event_bus.publications.count.should == 2
+    end
   end
 
   context 'When an event source is retreived' do
     let(:conference) do
-      event_store.post('Conference_123', [ ConferenceCreated, ConferenceScheduled, CalledForProposals ])
-      repository.find(123)
+      event_store.append_to_stream('Conference_123', [ ConferenceCreated, ConferenceScheduled, CalledForProposals ])
+      repository.find_by(123)
     end
 
-    it 'should replay al previous events' do
+    it 'should replay all previous events' do
       conference.id.should == 123
       conference.name.should == 'Test Conf'
       conference.description.should == 'A test conf'

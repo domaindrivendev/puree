@@ -14,18 +14,32 @@ module Puree
     end
 
     def add(source)
-      stream_name = "#{@klass.name}_#{@id_selector.call(source)}"
+      return if source.pending_events.empty?
 
-      @event_store.post(stream_name, source.pending_events)
+      stream_name = "#{@klass.name}_#{@id_selector.call(source)}"
+      
+      # TODO: Need a transaction here 
+      @event_store.append_to_stream(stream_name, source.pending_events)
+      source.pending_events.each { |event| @event_bus.publish(event) }
     end
 
-    def find(source_id)
+    def find_by(source_id)
       stream_name = "#{@klass.name}_#{source_id}"
-      stream = @event_store.get(stream_name)
+      stream = @event_store.get_stream(stream_name)
 
       source = @klass.allocate
       stream.each { |event| source.replay(event) }
       return source
+    end
+
+    def update(source)
+      return if source.pending_events.empty?
+
+      stream_name = "#{@klass.name}_#{@id_selector.call(source)}"
+      
+      # TODO: Need a transaction here 
+      @event_store.append_to_stream(stream_name, source.pending_events)
+      source.pending_events.each { |event| @event_bus.publish(event) }
     end
   end
 

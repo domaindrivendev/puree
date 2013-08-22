@@ -1,8 +1,7 @@
 require 'puree'
-require 'rspec-spies'
 
 require 'dummy'
-require 'fake_event_store'
+require 'fakes'
 
 # Test constants
 ScheduleDate = Time.now + (60 * 60 * 24 * 31)
