@@ -19,7 +19,7 @@ describe 'A Repository' do
     end
 
     it 'should persist tracked events to the event store' do
-      stream = event_store.get_stream('Conference_123')
+      stream = event_store.get_events('Conference_123')
       stream.count.should == 2
 
       event = stream.first
@@ -38,7 +38,7 @@ describe 'A Repository' do
 
   context 'When an event source is retreived' do
     let(:conference) do
-      event_store.append_to_stream('Conference_123', [ ConferenceCreated, ConferenceScheduled, CalledForProposals ])
+      event_store.add_events('Conference_123', [ ConferenceCreated, ConferenceScheduled, CalledForProposals ])
       repository.find_by(123)
     end
 
