@@ -4,13 +4,17 @@ class FakeEventStore
     @streams = {}
   end
 
-  def add_events(stream_name, events)
-    @streams[stream_name] ||= []
+  def create_stream(stream_name, events)
+    @streams[stream_name] = []
     @streams[stream_name].concat(events)
   end
 
-  def get_events(stream_name)
+  def get_events_for(stream_name)
     @streams[stream_name] || []
+  end
+
+  def append_events_to(stream_name, events)
+    @streams[stream_name].concat(events)
   end
 end
 
