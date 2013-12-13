@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe 'An Object that implements event sourcing' do
+describe 'An Event-sourced Aggregate, ' do
 
-  context 'When an instance is created' do
+  context 'When an instance is created, ' do
     let(:conference) do
       Conference.new(123, 'Test Conf', 'A test conf')
     end
@@ -21,7 +21,7 @@ describe 'An Object that implements event sourcing' do
     end
   end
 
-  context 'When recreated from previous events' do
+  context 'When recreated from previous events, ' do
     let(:conference) do
       conference = Conference.allocate
       conference.replay(ConferenceCreated)
@@ -39,7 +39,7 @@ describe 'An Object that implements event sourcing' do
     end
   end
 
-  context 'When commands are applied' do
+  context 'When commands are applied, ' do
     let(:conference) do
       conference = Conference.allocate
       conference.replay(ConferenceCreated)

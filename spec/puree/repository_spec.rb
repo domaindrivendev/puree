@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe 'A Repository' do
+describe 'A Repository, ' do
   let(:event_store) { FakeEventStore.new }
-  let(:event_bus) { FakeEventBus.new }
+  let(:event_dispatcher) { FakeEventDispatcher.new }
   let(:repository) do
     Puree::Repository.for(Conference,
       lambda { |conference| conference.id },
       event_store,
-      event_bus)
+      event_dispatcher)
   end
 
-  context 'When an event source is added' do
+  context 'When an Event-sourced Aggregate is added, ' do
     before(:each) do
       conference = Conference.new(123, 'Test Conf', 'A test conf')
       conference.schedule(ScheduleDate)
@@ -31,12 +31,12 @@ describe 'A Repository' do
       event.args.should == { id: 123, date: ScheduleDate }
     end
 
-    it 'should publish tracked events to the event bus ' do
-      event_bus.publications.count.should == 2
+    it 'should dispatch tracked events to any in process listeners' do
+      event_dispatcher.dispatched_events.count.should == 2
     end
   end
 
-  context 'When an event source is retreived' do
+  context 'When an event source is retreived, ' do
     let(:conference) do
       event_store.create_stream('Conference_123', [ ConferenceCreated ])
       event_store.append_events_to('Conference_123', [ ConferenceScheduled, CalledForProposals ])

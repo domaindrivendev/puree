@@ -18,14 +18,14 @@ class FakeEventStore
   end
 end
 
-class FakeEventBus
-  attr_reader :publications
+class FakeEventDispatcher
+  attr_reader :dispatched_events
 
   def initialize
-    @publications = []
+    @dispatched_events = []
   end
 
-  def publish(event)
-    @publications << event
+  def dispatch(event)
+    @dispatched_events << event
   end
 end

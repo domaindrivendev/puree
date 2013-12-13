@@ -46,7 +46,7 @@ class Conference < Puree::EventSource
   end
 end
 
-class TestSubscriber < Puree::Messaging::Subscriber
+class TestEventListener < Puree::EventListener
   attr_reader :notifications
 
   def initialize

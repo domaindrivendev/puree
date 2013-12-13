@@ -2,15 +2,15 @@ module Puree
   
   class Repository
 
-    def self.for(klass, id_selector, event_store, event_bus)
-      new(klass, id_selector, event_store, event_bus)
+    def self.for(klass, id_selector, event_store, event_dispatcher=nil)
+      new(klass, id_selector, event_store, event_dispatcher)
     end
 
-    def initialize(klass, id_selector, event_store, event_bus)
+    def initialize(klass, id_selector, event_store, event_dispatcher=nil)
       @klass = klass
       @id_selector = id_selector
       @event_store = event_store
-      @event_bus = event_bus
+      @event_dispatcher = event_dispatcher
     end
 
     def add(source)
@@ -20,7 +20,10 @@ module Puree
       
       # TODO: Need a transaction here 
       @event_store.create_stream(stream_name, source.pending_events)
-      source.pending_events.each { |event| @event_bus.publish(event) }
+
+      unless @event_dispatcher.nil?
+        source.pending_events.each { |event| @event_dispatcher.dispatch(event) }
+      end
     end
 
     def find_by(source_id)
@@ -39,7 +42,10 @@ module Puree
       
       # TODO: Need a transaction here 
       @event_store.append_events_to(stream_name, source.pending_events)
-      source.pending_events.each { |event| @event_bus.publish(event) }
+
+      unless @event_dispatcher.nil?
+        source.pending_events.each { |event| @event_dispatcher.dipatch(event) }
+      end
     end
   end
 
