@@ -1,6 +1,9 @@
+require 'singleton'
+
 module Puree
 
   class EventDispatcher
+    include Singleton
 
     def initialize
       @listeners = []

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'An EventDispatcher, ' do
-  let(:dispatcher) { Puree::EventDispatcher.new }
+  let(:dispatcher) { Puree::EventDispatcher.instance }
 
   context 'with registered listeners, ' do
     before(:each) do
