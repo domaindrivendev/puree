@@ -3,6 +3,12 @@ module Puree
   class EventSource
 
     module ClassMethods
+      attr_reader :identifier_name
+
+      def identifier(name)
+        attr_reader(name)
+        @identifier_name = name
+      end
 
       def apply_event(name, &block)
         event_handlers[name] = block

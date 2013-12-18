@@ -4,13 +4,13 @@ describe 'A Repository, ' do
   let(:event_store) { FakeEventStore.new }
   let(:event_dispatcher) { FakeEventDispatcher.new }
   let(:repository) do
-    Puree::Repository.for(Conference,
-      lambda { |conference| conference.id },
+    Puree::Repository.for(
+      Conference,
       event_store,
       event_dispatcher)
   end
 
-  context 'When an Event-sourced Aggregate is added, ' do
+  context 'When an Event-sourced aggregate is added, ' do
     before(:each) do
       conference = Conference.new(123, 'Test Conf', 'A test conf')
       conference.schedule(ScheduleDate)
@@ -31,12 +31,12 @@ describe 'A Repository, ' do
       event.args.should == { id: 123, date: ScheduleDate }
     end
 
-    it 'should dispatch tracked events to any in process listeners' do
+    it 'should dispatch tracked events to interested listeners' do
       event_dispatcher.dispatched_events.count.should == 2
     end
   end
 
-  context 'When an event source is retreived, ' do
+  context 'When an Event-sourced aggregate is retrieved, ' do
     let(:conference) do
       event_store.create_stream('Conference_123', [ ConferenceCreated ])
       event_store.append_events_to('Conference_123', [ ConferenceScheduled, CalledForProposals ])

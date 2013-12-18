@@ -2,13 +2,12 @@ module Puree
   
   class Repository
 
-    def self.for(klass, id_selector, event_store, event_dispatcher=nil)
-      new(klass, id_selector, event_store, event_dispatcher)
+    def self.for(klass, event_store, event_dispatcher=nil)
+      new(klass, event_store, event_dispatcher)
     end
 
-    def initialize(klass, id_selector, event_store, event_dispatcher=nil)
+    def initialize(klass, event_store, event_dispatcher=nil)
       @klass = klass
-      @id_selector = id_selector
       @event_store = event_store
       @event_dispatcher = event_dispatcher
     end
@@ -16,10 +15,7 @@ module Puree
     def add(source)
       return if source.pending_events.empty?
 
-      stream_name = "#{@klass.name}_#{@id_selector.call(source)}"
-      
-      # TODO: Need a transaction here 
-      @event_store.create_stream(stream_name, source.pending_events)
+      @event_store.create_stream(stream_name_for(source), source.pending_events)
 
       unless @event_dispatcher.nil?
         source.pending_events.each { |event| @event_dispatcher.dispatch(event) }
@@ -38,14 +34,18 @@ module Puree
     def update(source)
       return if source.pending_events.empty?
 
-      stream_name = "#{@klass.name}_#{@id_selector.call(source)}"
-      
-      # TODO: Need a transaction here 
-      @event_store.append_events_to(stream_name, source.pending_events)
+      @event_store.append_events_to(stream_name_for(source), source.pending_events)
 
       unless @event_dispatcher.nil?
         source.pending_events.each { |event| @event_dispatcher.dipatch(event) }
       end
+    end
+
+    private
+
+    def stream_name_for(source)
+      source_id = source.send(@klass.identifier_name)
+      stream_name = "#{@klass.name}_#{source_id}"
     end
   end
 

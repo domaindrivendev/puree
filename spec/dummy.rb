@@ -1,5 +1,6 @@
 class Conference < Puree::EventSource
-  attr_reader :id, :name, :description, :date
+  identifier :id
+  attr_reader :name, :description, :date
 
   def initialize(id, name, description=nil)
     raise ArgumentError.new("id required") if id.nil?
