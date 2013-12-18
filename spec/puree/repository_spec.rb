@@ -6,6 +6,7 @@ describe 'A Repository, ' do
   let(:repository) do
     Puree::Repository.for(
       Conference,
+      FakeIdGenerator.new,
       event_store,
       event_dispatcher)
   end

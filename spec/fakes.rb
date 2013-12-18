@@ -1,3 +1,10 @@
+class FakeIdGenerator
+
+  def next_id(scope)
+    return 123
+  end
+end
+
 class FakeEventStore
 
   def initialize
