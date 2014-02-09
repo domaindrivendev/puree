@@ -14,7 +14,7 @@ module Puree
     end
 
     def next_id
-      id_generator.next_id(@klass.name)
+      @id_generator.next_id(@klass.name)
     end
 
     def add(source)
@@ -42,7 +42,7 @@ module Puree
       @event_store.append_events_to(stream_name_for(source), source.pending_events)
 
       unless @event_dispatcher.nil?
-        source.pending_events.each { |event| @event_dispatcher.dipatch(event) }
+        source.pending_events.each { |event| @event_dispatcher.dispatch(event) }
       end
     end
 
